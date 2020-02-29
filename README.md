@@ -1,2 +1,2 @@
 # Algorithm-Questiones
-Trying to complete a algorithm questione everyday
+Trying to complete a algorithm question everyday
