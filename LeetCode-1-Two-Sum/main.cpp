@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 
 using std::cout;
 using std::vector;
@@ -25,18 +26,22 @@ vector<int> find_index(const vector<int>& nums, const int target)
         [](const auto& left, const auto& right) { return left.first < right.first; }
     );
 
-    for (size_t first = 0; first < number_with_index_vec.size(); ++first)
-        for (auto second = first + 1; second < number_with_index_vec.size(); ++second)
-        {
-            const auto res = number_with_index_vec[first].first + number_with_index_vec[second].first;
-            if (res > target)
-                break;
-            if (res == target)
-                return {
-                    static_cast<int>(number_with_index_vec[first].second),
-                    static_cast<int>(number_with_index_vec[second].second)
-                };
-        }
+    const auto& begin = number_with_index_vec.cbegin();
+    const auto& end = number_with_index_vec.cend();
+
+    for (auto i = begin; i < end; ++i)
+    {
+        const auto dif = target - i->first;
+        const auto& j = std::lower_bound(
+            std::next(i, 1),
+            end,
+            dif,
+            [](decltype(*i)& left, const int right) { return left.first < right; }
+        );
+
+        if (j != end && j->first == dif)
+            return {static_cast<int>(i->second), static_cast<int>(j->second)};
+    }
 
     throw std::invalid_argument{""};
 }
