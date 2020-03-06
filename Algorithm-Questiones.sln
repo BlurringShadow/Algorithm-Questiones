@@ -10,6 +10,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-3-Longest-Substrin
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode4-Median-of-Two-Sorted-Arrays", "LeetCode4-Median-of-Two-Sorted-Arrays\LeetCode4-Median-of-Two-Sorted-Arrays.vcxproj", "{70542FB3-0AB4-4BA4-A0F5-E57B298486D0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Longest-Palindromic-Substring", "Longest-Palindromic-Substring\Longest-Palindromic-Substring.vcxproj", "{88E8471E-7765-40F8-B104-4F03A1399DEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -50,6 +52,14 @@ Global
 		{70542FB3-0AB4-4BA4-A0F5-E57B298486D0}.Release|x64.Build.0 = Release|x64
 		{70542FB3-0AB4-4BA4-A0F5-E57B298486D0}.Release|x86.ActiveCfg = Release|Win32
 		{70542FB3-0AB4-4BA4-A0F5-E57B298486D0}.Release|x86.Build.0 = Release|Win32
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Debug|x64.ActiveCfg = Debug|x64
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Debug|x64.Build.0 = Debug|x64
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Debug|x86.ActiveCfg = Debug|Win32
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Debug|x86.Build.0 = Debug|Win32
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Release|x64.ActiveCfg = Release|x64
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Release|x64.Build.0 = Release|x64
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Release|x86.ActiveCfg = Release|Win32
+		{88E8471E-7765-40F8-B104-4F03A1399DEF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

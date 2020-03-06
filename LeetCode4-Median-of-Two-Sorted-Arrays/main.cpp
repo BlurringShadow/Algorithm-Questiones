@@ -41,13 +41,13 @@ static auto impl(IteratorType first_begin,
             ++second_begin;
         }
 
+        is_first_end = first_begin == first_end;
+        is_second_end = second_begin == second_end;
+
+        if (is_first_end && is_second_end || count > mid_size)
+            return current * 1.0;
+
         {
-            is_first_end = first_begin == first_end;
-            is_second_end = second_begin == second_end;
-
-            if (is_first_end && is_second_end || count > mid_size)
-                return current * 1.0;
-
             auto&& next_current = is_first_end
                                       ? *second_begin
                                       : (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
