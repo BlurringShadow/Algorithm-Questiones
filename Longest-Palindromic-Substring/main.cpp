@@ -61,51 +61,37 @@ public:
         size_t center = 0;
         size_t max_count = 0;
 
-        struct count_pair
-        {
-            size_t count;
-            bool need_extension;
-        };
-
         {
             const auto&& generated_str = pre_condition(str);
-            std::array<std::optional<count_pair>, generated_max_str_length> optional_counts;
-            for (size_t i = 0; i < str_size;)
+            std::array<size_t, generated_max_str_length> counts{};
+
+            for (size_t i = 0, current_center = 0; i < str_size; ++i)
             {
-                auto& optional_count = optional_counts[i];
+                const auto current_center_count = counts[current_center];
+                const auto offset = i - current_center;
+                auto& count = counts[i];
 
-                decltype(optional_count->count) count;
+                const auto mirrored_count_index = current_center - offset;
+                const auto center_based_max_count = current_center_count > offset ? current_center_count - offset : 0;
 
-                if (optional_count)
+                if (mirrored_count_index < counts.size())
                 {
-                    if (!optional_count->need_extension) continue;
-
-                    count = optional_count->count;
+                    const auto mirrored_count = counts[mirrored_count_index];
+                    if (mirrored_count < center_based_max_count)
+                    {
+                        count = mirrored_count;
+                        continue;
+                    }
                 }
-                else count = 0;
 
-                count = get_palindrome_count(generated_str, i, count, str_size);
-                optional_count = {count, false};
+                count = get_palindrome_count(generated_str, i, center_based_max_count, str_size);
+                current_center = i;
 
                 if (count > max_count)
                 {
                     center = i;
                     max_count = count;
                 }
-
-                for (size_t j = 1; j <= count; ++j)
-                {
-                    auto& mirrored_optional_count = optional_counts[i + j];
-                    if (!mirrored_optional_count || !mirrored_optional_count->need_extension)
-                        continue;
-
-                    const auto left_count = optional_counts[i - j]->count;
-                    const auto offset = left_count + j;
-                    if (offset <= count)
-                        mirrored_optional_count = {left_count, offset == count};
-                }
-
-                ++i;
             }
         }
 
@@ -121,7 +107,7 @@ int main() noexcept
     try
     {
         std::cout << Solution::longestPalindrome(
-            "bananas"
+            "aaabaaaa"
         );
     }
     catch (...) {}
