@@ -17,6 +17,9 @@ public:
 
     using generated_buffer_type = std::array<std::optional<char>, generated_max_str_length>;
 
+    using input_type = int;
+    using mark_array_type = std::array<bool, std::numeric_limits<input_type>::max()>;
+
     static constexpr char invalid_char = -1;
 
     // only suitable for aba pattern
