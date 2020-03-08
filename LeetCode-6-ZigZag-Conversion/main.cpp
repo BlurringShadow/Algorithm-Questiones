@@ -31,11 +31,18 @@ public:
 
         for (size_t i = 1; i < row_size - 1; ++i)
         {
-            auto step_size = 2 * i;
-            for (auto j = i; j < str_size; j += step_size, ++res_index)
+            const auto step_size_two = 2 * i;
+            const auto step_size_one = pattern_size - step_size_two;
+            for (auto j = i;;)
             {
+                if (j >= str_size) break;
+
                 res[res_index] = input_str[j];
-                step_size = pattern_size - step_size;
+                j += step_size_one, ++res_index;
+                if (j >= str_size) break;
+
+                res[res_index] = input_str[j];
+                j += step_size_two, ++res_index;
             }
         }
 
