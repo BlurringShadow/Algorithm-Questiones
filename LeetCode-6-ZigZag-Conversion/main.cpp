@@ -13,11 +13,12 @@
 class Solution
 {
 public:
-    static std::string convert(const std::string_view input_str, const size_t row_size)
+    static std::string convert(const std::string_view& input_str, const size_t row_size)
     {
-        if (row_size == 1) return {input_str.cbegin(), input_str.cend()};
-
         const auto str_size = input_str.size();
+
+        if (row_size == 1 || row_size >= str_size) return {input_str.cbegin(), input_str.cend()};
+
         const auto pattern_size = 2 * (row_size - 1);
 
         std::string res;
