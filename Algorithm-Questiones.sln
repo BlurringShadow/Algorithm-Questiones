@@ -12,6 +12,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode4-Median-of-Two-Sor
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode5-Longest-Palindromic-Substring", "LeetCode5-Longest-Palindromic-Substring\LeetCode5-Longest-Palindromic-Substring.vcxproj", "{060F59E2-EA48-4EAA-B8E5-297653719224}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-6-ZigZag-Conversion", "LeetCode-6-ZigZag-Conversion\LeetCode-6-ZigZag-Conversion.vcxproj", "{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -60,6 +62,14 @@ Global
 		{060F59E2-EA48-4EAA-B8E5-297653719224}.Release|x64.Build.0 = Release|x64
 		{060F59E2-EA48-4EAA-B8E5-297653719224}.Release|x86.ActiveCfg = Release|Win32
 		{060F59E2-EA48-4EAA-B8E5-297653719224}.Release|x86.Build.0 = Release|Win32
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Debug|x64.ActiveCfg = Debug|x64
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Debug|x64.Build.0 = Debug|x64
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Debug|x86.ActiveCfg = Debug|Win32
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Debug|x86.Build.0 = Debug|Win32
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Release|x64.ActiveCfg = Release|x64
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Release|x64.Build.0 = Release|x64
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Release|x86.ActiveCfg = Release|Win32
+		{0915EF7F-05FC-4CBF-89B0-6B704E8D162D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
