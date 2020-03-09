@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{70542fb3-0ab4-4ba4-a0f5-e57b298486d0}</ProjectGuid>
-    <RootNamespace>LeetCode4_Median_of_Two_Sorted_Arrays</RootNamespace>
+    <ProjectGuid>{9936384e-a0a8-45a3-bf3d-2eb0616eabb4}</ProjectGuid>
+    <RootNamespace>LeetCode_5_Longest_Palindromic_Substring</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

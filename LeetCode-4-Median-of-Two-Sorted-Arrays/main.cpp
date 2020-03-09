@@ -7,14 +7,13 @@
 #include <iostream>
 #include <vector>
 
-template <typename IteratorType>
-static auto impl(IteratorType first_begin,
-                 const IteratorType first_end,
-                 IteratorType second_begin,
-                 const IteratorType second_end,
-                 const size_t size
-
-
+template<typename IteratorType>
+static auto impl(
+    IteratorType first_begin,
+    const IteratorType first_end,
+    IteratorType second_begin,
+    const IteratorType second_end,
+    const size_t size
 )
 {
     auto is_first_end = first_begin == first_end;
@@ -27,15 +26,15 @@ static auto impl(IteratorType first_begin,
                        ? *second_begin
                        : (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
 
-    while (true)
+    while(true)
     {
-        while (first_begin != first_end && *first_begin <= current)
+        while(first_begin != first_end && *first_begin <= current)
         {
             ++count;
             ++first_begin;
         }
 
-        while (second_begin != second_end && *second_begin <= current)
+        while(second_begin != second_end && *second_begin <= current)
         {
             ++count;
             ++second_begin;
@@ -44,7 +43,7 @@ static auto impl(IteratorType first_begin,
         is_first_end = first_begin == first_end;
         is_second_end = second_begin == second_end;
 
-        if (is_first_end && is_second_end || count > mid_size)
+        if(is_first_end && is_second_end || count > mid_size)
             return current * 1.0;
 
         {
@@ -52,7 +51,7 @@ static auto impl(IteratorType first_begin,
                                       ? *second_begin
                                       : (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
 
-            if (count == mid_size) return is_odd ? next_current : (next_current + current) / 2.0;
+            if(count == mid_size) return is_odd ? next_current : (next_current + current) / 2.0;
 
             current = std::move(next_current);
         }
@@ -72,7 +71,9 @@ public:
 
 int main()
 {
-    std::cout << Solution{}.findMedianSortedArrays({},
-                                                   {1});
+    std::cout << Solution{}.findMedianSortedArrays(
+        {},
+        {1}
+    );
     return 0;
 }
