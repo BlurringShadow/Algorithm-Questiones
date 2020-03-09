@@ -1,3 +1,8 @@
+/*
+ * Given a 32-bit signed integer, reverse digits of an integer.
+ * For the purpose of this problem, assume that your function returns 0 when the reversed integer overflows.
+ */
+
 #include <iostream>
 
 // ReSharper disable once CppInconsistentNaming
