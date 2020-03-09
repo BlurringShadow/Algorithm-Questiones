@@ -4,8 +4,8 @@
 class Solution
 {
 public:
-    static constexpr int int_max = std::numeric_limits<int>::max();
-    static constexpr int int_min = std::numeric_limits<int>::min();
+    static constexpr std::int32_t int32_max = std::numeric_limits<std::int32_t>::max();
+    static constexpr std::int32_t int32_min = std::numeric_limits<std::int32_t>::min();
 
     template<typename IntegerType>
     static constexpr IntegerType reverse_impl(IntegerType input_value)
@@ -38,16 +38,16 @@ public:
     }
 
     template<typename IntegerType>
-    static constexpr int reverse(const IntegerType input_value)
+    static constexpr std::int32_t reverse(const IntegerType input_value)
     {
-        if(input_value > int_max || input_value < int_min) return 0;
+        if(input_value > int32_max || input_value < int32_min) return 0;
 
-        return reverse_impl(static_cast<int>(input_value));
+        return reverse_impl(static_cast<std::int32_t>(input_value));
     }
 };
 
 
-int main()
+std::int32_t main()
 {
     const auto v = Solution::reverse(-2147483648);
     std::cout << v;
