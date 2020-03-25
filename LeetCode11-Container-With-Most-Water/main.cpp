@@ -14,24 +14,34 @@ public:
     // ReSharper disable once CppInconsistentNaming
     [[nodiscard]] static int maxArea(const std::vector<int>& height)
     {
-        auto i = 0, j = static_cast<int>(height.size() - 1);
+        std::ios::sync_with_stdio(false);
+        std::cin.tie(nullptr);
+        std::cout.tie(nullptr);
+
+        auto left_index = 0, right_index = static_cast<int>(height.size() - 1);
         auto max = 0;
-        while(i < j)
+        while(left_index < right_index)
         {
-            decltype(i) next;
+            decltype(left_index) next;
             decltype(max) product;
 
-            if(height[i] < height[j])
+            const auto l_value = height[left_index], r_value = height[right_index];
+
+            if(l_value < r_value)
             {
-                product = height[i] * (j - i);
-                for(next = i + 1; next < j && height[next] < height[j] && height[next] - height[i] < next - i; ++next);
-                i = next;
+                product = l_value * (right_index - left_index);
+                for(next = left_index + 1;
+                    next < right_index && height[next] < r_value && height[next] - l_value < next - left_index;
+                    ++next);
+                left_index = next;
             }
             else
             {
-                product = height[j] * (j - i);
-                for(next = j - 1; next > i && height[next] < height[i] && height[next] - height[j] < j - next; --next);
-                j = next;
+                product = height[right_index] * (right_index - left_index);
+                for(next = right_index - 1;
+                    next > left_index && height[next] < l_value && height[next] - r_value < right_index - next;
+                    --next);
+                right_index = next;
             }
             if(product > max) max = product;
         }
