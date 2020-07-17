@@ -33,11 +33,11 @@ public:
     {
         auto offset = start_count;
 
-        while (true)
+        while(true)
         {
             const auto right_index = center_index + offset;
             const auto left_index = center_index - offset;
-            if (right_index >= str_size || left_index >= str_size || str[left_index] != str[right_index])
+            if(right_index >= str_size || left_index >= str_size || str[left_index] != str[right_index])
                 break;
 
             ++offset;
@@ -50,7 +50,7 @@ public:
     {
         generated_buffer_type new_string{};
 
-        for (size_t i = 0; i < str.size(); ++i)
+        for(size_t i = 0; i < str.size(); ++i)
             new_string[2 * i + 1] = str[i];
 
         return new_string;
@@ -68,7 +68,7 @@ public:
             const auto&& generated_str = pre_condition(str);
             std::array<size_t, generated_max_str_length> counts{};
 
-            for (size_t i = 0, current_center = 0; i < str_size; ++i)
+            for(size_t i = 0, current_center = 0; i < str_size; ++i)
             {
                 const auto current_center_count = counts[current_center];
                 const auto offset = i - current_center;
@@ -77,10 +77,10 @@ public:
                 const auto mirrored_count_index = current_center - offset;
                 const auto center_based_max_count = current_center_count > offset ? current_center_count - offset : 0;
 
-                if (mirrored_count_index < counts.size())
+                if(mirrored_count_index < counts.size())
                 {
                     const auto mirrored_count = counts[mirrored_count_index];
-                    if (mirrored_count < center_based_max_count)
+                    if(mirrored_count < center_based_max_count)
                     {
                         count = mirrored_count;
                         continue;
@@ -90,7 +90,7 @@ public:
                 count = get_palindrome_count(generated_str, i, center_based_max_count, str_size);
                 current_center = i;
 
-                if (count > max_count)
+                if(count > max_count)
                 {
                     center = i;
                     max_count = count;
@@ -113,6 +113,6 @@ int main() noexcept
             "aaabaaaa"
         );
     }
-    catch (...) {}
+    catch(...) {}
     return 0;
 }

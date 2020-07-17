@@ -51,6 +51,13 @@ public:
 
 int main()
 {
-    std::cout << Solution::maxArea({1, 8, 6, 2, 5, 4, 8, 3, 7});
+    const auto test_data = {1, 8, 6, 2, 5, 4, 8, 3, 7};
+    try
+    {
+        std::cout << Solution::maxArea(test_data);
+    }
+    catch(...)
+    {
+    }
     return 0;
 }

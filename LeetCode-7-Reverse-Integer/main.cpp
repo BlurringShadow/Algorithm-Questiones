@@ -52,7 +52,7 @@ public:
 };
 
 
-std::int32_t main()
+int main()
 {
     const auto v = Solution::reverse(-2147483648);
     std::cout << v;

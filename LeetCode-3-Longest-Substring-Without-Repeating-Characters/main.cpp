@@ -21,19 +21,19 @@ public:
         {
             const auto size = s.size();
 
-            for (size_t i = 0; i != size; ++i)
+            for(size_t i = 0; i != size; ++i)
             {
                 auto& index = char_indices[s[i]];
-                if (index)
+                if(index)
                 {
                     const auto new_begin_index = *index + 1;
-                    for (; begin_index < new_begin_index; ++begin_index)
+                    for(; begin_index < new_begin_index; ++begin_index)
                         char_indices[s[begin_index]].reset();
                 }
                 else
                 {
                     const auto count = i - begin_index + 1;
-                    if (count > largest_count) largest_count = count;
+                    if(count > largest_count) largest_count = count;
                 }
 
                 index = i;

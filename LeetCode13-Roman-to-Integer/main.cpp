@@ -12,7 +12,6 @@
 #include <array>
 #include <iostream>
 #include <string_view>
-#include <utility>
 
 //aggressive constexpr usage
 

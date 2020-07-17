@@ -22,9 +22,9 @@ static auto impl(
     const auto mid_size = size / 2;
 
     size_t count = 0;
-    auto current = is_first_end
-                       ? *second_begin
-                       : (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
+    auto current = is_first_end ?
+                       *second_begin :
+                       (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
 
     while(true)
     {
@@ -47,9 +47,9 @@ static auto impl(
             return current * 1.0;
 
         {
-            auto&& next_current = is_first_end
-                                      ? *second_begin
-                                      : (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
+            auto&& next_current = is_first_end ?
+                                      *second_begin :
+                                      (is_second_end ? *first_begin : std::min(*first_begin, *second_begin));
 
             if(count == mid_size) return is_odd ? next_current : (next_current + current) / 2.0;
 
