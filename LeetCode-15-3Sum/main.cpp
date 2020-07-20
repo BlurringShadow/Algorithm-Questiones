@@ -4,12 +4,15 @@
  * Find all unique triplets in the array which gives the sum of zero.
  */
 
-#include <algorithm>
 #include <iostream>
+#include <set>
+#include <unordered_map>
 #include <vector>
 
 using std::cout;
 using std::vector;
+using std::unordered_map;
+using std::set;
 
 // ReSharper disable once CppInconsistentNaming
 class Solution
@@ -23,134 +26,61 @@ class Solution
         return 0;
     }();
 
-    template<typename FuncType, typename SearchIteratorType, typename SumIteratorType>
-    [[nodiscard]] static vector<vector<int>> sum_search(
-        const FuncType tuple_create_func,
-        const SearchIteratorType& search_cbegin,
-        const SearchIteratorType& search_cend,
-        SumIteratorType sum_up_cbegin,
-        SumIteratorType sum_up_cend
-    )
-    {
-        vector<vector<int>> res;
-
-        if(sum_up_cbegin != sum_up_cend)
-        {
-            auto previous_first = -1;
-            do
-            {
-                const auto first = *sum_up_cbegin;
-                if(previous_first != first)
-                {
-                    auto previous_second = -1;
-                    
-                    for(auto&& sum_up_next = std::next(sum_up_cbegin); sum_up_next != sum_up_cend; ++sum_up_next)
-                    {
-                        const auto second = *sum_up_next;
-                        if(previous_second != second)
-                        {
-                            bool is_equal{};
-                            const auto sum = first + second;
-                            if(std::lower_bound(
-                                search_cbegin,
-                                search_cend,
-                                sum,
-                                [&](const auto left, const auto right)
-                                {
-                                    if(left == right)
-                                    {
-                                        is_equal = true;
-                                        return false;
-                                    }
-                                    return left < right;
-                                }
-                            ) == search_cend)
-                            {
-                                sum_up_cend = sum_up_next;
-                                break;
-                            }
-                            if(is_equal) res.emplace_back(tuple_create_func(first, second, sum));
-
-                            previous_second = second;
-                        }
-                    }
-
-                    previous_first = first;
-                }
-                ++sum_up_cbegin;
-            }
-            while(sum_up_cbegin != sum_up_cend);
-        }
-
-        return res;
-    }
-
 public:
     // ReSharper disable once CppInconsistentNaming
     static vector<vector<int>> threeSum(const vector<int>& nums)
     {
-        unsigned zero_count = 0;
+        using limits = std::numeric_limits<int>;
 
-        vector<int> natural_nums, negative_nums;
+        vector<vector<int>> res;
+        unordered_map<int, size_t> count_map(nums.size());
+        auto max = limits::min(), min = limits::max();
+        vector<int> vec;
 
-        natural_nums.reserve(nums.size());
-        negative_nums.reserve(nums.size());
         for(const auto num : nums)
-            if(num == 0)
-            {
-                if(zero_count == 0) natural_nums.emplace(natural_nums.cbegin(), 0);
-                ++zero_count;
-            }
-            else if(num > 0)
-                natural_nums.emplace(
-                    std::upper_bound(natural_nums.cbegin(), natural_nums.cend(), num),
-                    num
-                );
-            else
-            {
-                const auto reversed = -num;
-                negative_nums.emplace(
-                    std::upper_bound(negative_nums.cbegin(), negative_nums.cend(), reversed),
-                    reversed
-                );
-            }
-
-        const auto &natural_num_cbegin = natural_nums.cbegin(),
-                   &natural_num_cend = natural_nums.cend(),
-                   &negative_num_cbegin = negative_nums.cbegin(),
-                   &negative_num_cend = negative_nums.cend();
-
-        auto&& res = sum_search(
-            [](const int sum_first, const int sum_second, const int sum)
-            {
-                return vector{-sum_first, -sum_second, sum};
-            },
-            natural_num_cbegin,
-            natural_num_cend,
-            negative_num_cbegin,
-            negative_num_cend
-        );
-
-        // Special case handle for 3 '0's
-        if(zero_count >= 3) res.push_back({0, 0, 0});
-
-
         {
-            auto&& vec = sum_search(
-                [](const int sum_first, const int sum_second, const int sum)
-                {
-                    return vector{sum_first, sum_second, -sum};
-                },
-                negative_num_cbegin,
-                negative_num_cend,
-                natural_num_cbegin,
-                natural_num_cend
-            );
+            ++count_map[num];
+            if(num > max) max = num;
+            if(num < min) min = num;
+        }
 
-            const auto size = res.size();
-            const auto vec_size = vec.size();
-            res.resize(size + vec_size);
-            for(size_t i = 0; i < vec_size; ++i) res[i + size] = std::move(vec[i]);
+        const auto& count_map_end = count_map.cend();
+
+        vec.reserve(nums.size());
+        for(auto i = min; i <= max; ++i) if(count_map.find(i) != count_map_end) vec.push_back(i);
+
+        const auto& end = vec.cend();
+
+        for(auto&& i = vec.cbegin(); i != end; ++i)
+        {
+            const auto first = *i;
+            {
+                const auto left_count_it = count_map.find(*i);
+
+                if(left_count_it == count_map_end) continue;
+
+                const auto left_count = left_count_it->second;
+                if(left_count > 1)
+                {
+                    const auto third = -(first + first);
+                    if(third < first) continue;
+
+                    if(third == first) { if(left_count >= 3) res.push_back({first, first, third}); }
+                    else if(count_map.find(third) != count_map_end) res.push_back({first, first, third});
+                }
+            }
+
+            for(auto&& j = std::next(i); j != end; ++j)
+            {
+                const auto second = *j;
+
+                const auto third = -(first + second);
+                if(third < second) break;
+
+                const auto& third_count_it = count_map.find(third);
+                if(third_count_it == count_map_end) continue;
+                if(third_count_it->second > (third == second ? 1 : 0)) res.push_back({first, second, third});
+            }
         }
 
         return res;
@@ -161,12 +91,12 @@ int main() noexcept
 {
     try
     {
-        for(const auto& element : Solution::threeSum({-1, 0, 1, 2, -1, -4}))
+        for(const auto& element : Solution::threeSum({0, -4, -1, -4, -2, -3, 2}))
         {
             for(const auto value : element) std::cout << value << ' ';
             std::cout << '\n';
         }
     }
-    catch(...) {}
+    catch(const std::exception& e) { std::cout << e.what(); }
     return 0;
 }
