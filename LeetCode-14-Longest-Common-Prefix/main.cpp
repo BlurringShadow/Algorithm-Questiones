@@ -15,28 +15,18 @@
 using std::cout;
 using std::vector;
 
-struct static_ini
-{
-    // ReSharper disable once CppNonExplicitConvertingConstructor
-    template<typename Func>
-    static_ini(const Func& f) { f(); }
-};
-
 // ReSharper disable once CppInconsistentNaming
 class Solution
 {
-public:
-    Solution()
+    inline static const auto _ = []()
     {
-        static const static_ini static_initialization_{
-            []()
-            {
-                std::ios::sync_with_stdio(false);
-                std::cin.tie(nullptr);
-                std::cout.tie(nullptr);
-            }
-        };
-    }
+        std::ios::sync_with_stdio(false);
+        std::cin.tie(nullptr);
+        std::cout.tie(nullptr);
+        return 0;
+    }();
+
+public:
 
     // ReSharper disable once CppInconsistentNaming
     static std::string longestCommonPrefix(const vector<std::string>& strs)
