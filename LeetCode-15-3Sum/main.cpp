@@ -5,14 +5,12 @@
  */
 
 #include <iostream>
-#include <set>
 #include <unordered_map>
 #include <vector>
 
 using std::cout;
 using std::vector;
 using std::unordered_map;
-using std::set;
 
 // ReSharper disable once CppInconsistentNaming
 class Solution
