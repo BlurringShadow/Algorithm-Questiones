@@ -14,7 +14,7 @@
 using std::array;
 using std::cout;
 using std::size_t;
-using std::tuple;
+using std::pair;
 using std::vector;
 using int_limit = std::numeric_limits<int>;
 
@@ -30,6 +30,11 @@ class Solution
         return 0;
     }();
 
+    static bool pair_compare(const pair<int, size_t> left, const pair<int, size_t> right)
+    {
+        return left.first < right.first;
+    }
+
 public:
 
     // ReSharper disable once CppInconsistentNaming
@@ -41,135 +46,144 @@ public:
     template<size_t SumSize>
     static auto count_nums(const vector<int>& nums)
     {
-        vector<int> num_set;
-        vector<size_t> counts;
+        vector<pair<int, size_t>> ordered_num_set;
 
-        auto min = int_limit::max(), max = int_limit::min();
-
-        // first iteration to find max and min
-        for(const auto num : nums)
-        {
-            if(num < min) min = num;
-            if(num > max) max = num;
-        }
-
-        counts.resize(max - min + 1);
-        num_set.reserve(counts.size());
-
+        ordered_num_set.reserve(nums.size());
         // second iteration to record element count and insert them in order
         for(const auto num : nums)
         {
-            auto& count = counts[num - min];
-            if(count == 0) num_set.insert(std::lower_bound(num_set.cbegin(), num_set.cend(), num), num);
+            const auto& end = ordered_num_set.end();
+            auto&& it = std::lower_bound(
+                ordered_num_set.begin(),
+                end,
+                pair{num, size_t{}},
+                pair_compare
+            );
+            if(it != end && it->first == num) ++it->second;
+            else ordered_num_set.emplace(it, pair{num, 1});
+        }
+        ordered_num_set.shrink_to_fit();
+        return ordered_num_set;
+    }
 
-            ++count;
+    template<size_t SumSize>
+    static auto find_target(
+        const vector<pair<int, size_t>>& ordered_num_set,
+        array<size_t, SumSize - 1>& indices,
+        const int target
+    )
+    {
+        vector<int> result;
+        auto& first_index = indices.front();
+        const auto [target_min, target_min_count] = ordered_num_set[first_index];
+        // if target is less than our last index in number set,
+        // than discard to prevent duplication
+        if(target < target_min) first_index = ordered_num_set.size() - 1;
+        else if(std::binary_search(
+            ordered_num_set.cbegin() + first_index + (target_min_count == 0),
+            ordered_num_set.cend(),
+            pair{target, size_t{}},
+            pair_compare
+        ))
+        {
+            result.resize(SumSize, target);
+            std::transform(
+                indices.crbegin(),
+                indices.crend(),
+                result.begin(),
+                [&](const auto index) { return ordered_num_set[index].first; }
+            );
         }
 
-        return tuple{num_set, counts};
+        return result;
+    }
+
+    template<size_t SumSize>
+    static vector<vector<int>> multi_number_sum_impl(vector<pair<int, size_t>> ordered_num_set, const int sum_target)
+    {
+        vector<vector<int>> result_set;
+
+        const auto num_size = ordered_num_set.size();
+
+        array<int, SumSize - 1> sum_cache{};
+        array<size_t, SumSize - 1> indices{};
+        const auto max = ordered_num_set.back().second;
+
+        // initialization
+        indices.back() = 0;
+        {
+            auto& [front_num, front_count] = ordered_num_set.front();
+            sum_cache.back() = front_num;
+            --front_count;
+        }
+
+        size_t i = indices.size() - 1;
+        while(true)
+        {
+            // assign the out of bound index
+            for(; i != 0; --i)
+            {
+                const auto previous_index = indices[i];
+                auto& count = ordered_num_set[previous_index].second;
+                auto& next_index = indices[i - 1];
+                if(count > 0)
+                {
+                    next_index = previous_index;
+                    --count;
+                }
+                else
+                {
+                    next_index = previous_index + 1;
+                    --ordered_num_set[next_index].second;
+                }
+                sum_cache[i - 1] = sum_cache[i] + ordered_num_set[next_index].first;
+            }
+
+            // find the target number
+            {
+                auto&& result = find_target<SumSize>(ordered_num_set, indices, sum_target - sum_cache[0]);
+                if(!result.empty()) result_set.emplace_back(std::move(result));
+            }
+
+            // increase the indices
+            for(i = 0;; ++i)
+            {
+                if(i == indices.size()) return result_set;
+
+                auto& index = indices[i];
+                ++ordered_num_set[index].second;
+
+                // accumulate the counts
+                {
+                    size_t accumulate_count = 0;
+                    const auto next_index = index + 1;
+                    for(auto j = next_index; j < num_size; ++j)
+                    {
+                        accumulate_count += ordered_num_set[j].second;
+                        if(accumulate_count + num_size - 1 - j > i)
+                        {
+                            auto& [num, count] = ordered_num_set[next_index];
+                            const auto next_i = i + 1;
+
+                            index = next_index;
+                            --count;
+                            sum_cache[i] = (next_i < indices.size() ? sum_cache[next_i] : 0) + num;
+                            goto end_of_increase_index_loop;
+                        }
+                    }
+                }
+            }
+        end_of_increase_index_loop: ;
+        }
     }
 
     template<size_t SumSize>
     static vector<vector<int>> multi_number_sum(const vector<int>& nums, const int sum_target)
     {
         static_assert(SumSize >= 2, "Sum size should larger than 0");
-
-        vector<vector<int>> result_set;
-
-        array<int, SumSize - 1> sum_cache{};
-        array<size_t, SumSize - 1> indices{};
-
-        auto&& [num_set, counts] = count_nums<SumSize>(nums);
-        const auto num_set_size = num_set.size();
-        const auto min = num_set[0], max = num_set[num_set_size - 1];
-
-        // initialization
-        indices[indices.size() - 1] = 0;
-        sum_cache[sum_cache.size() - 1] = num_set[0];
-        --counts[num_set[0] - min];
-        for(size_t i = indices.size() - 1; i != 0; --i)
-        {
-            auto& count = counts[num_set[indices[i]] - min];
-            auto& next_index = indices[i - 1];
-            if(count > 0)
-            {
-                next_index = indices[i];
-                --count;
-            }
-            else
-            {
-                next_index = indices[i] + 1;
-                --counts[num_set[next_index] - min];
-            }
-            sum_cache[i - 1] = sum_cache[i] + num_set[next_index];
-        }
-
-        while(true)
-        {
-            // find the target number
-            const auto target = sum_target - sum_cache[0];
-
-            // if target is less than our last index in number set,
-            // than discard to prevent duplication
-            if(target < num_set[indices[0]]) indices[0] = num_set_size - 1;
-            else if(target <= max && counts[target - min] != 0)
-            {
-                vector<int> result(SumSize, target);
-                std::transform(
-                    indices.crbegin(),
-                    indices.crend(),
-                    result.begin(),
-                    [&](const auto index) { return num_set[index]; }
-                );
-                result_set.emplace_back(std::move(result));
-            }
-
-            // increase the indices
-            {
-                size_t i = 0;
-                for(;; ++i)
-                {
-                    if(i == indices.size()) return result_set;
-
-                    auto& index = indices[i];
-                    ++counts[num_set[index] - min];
-
-                    const auto next_index = index + 1;
-                    if(next_index != num_set_size)
-                    {
-                        const auto next_num = num_set[next_index];
-                        auto& next_count = counts[next_num - min];
-
-                        if(num_set_size - next_index + next_count > indices.size() - i)
-                        {
-                            const auto next_i = i + 1;
-
-                            index = next_index;
-                            --next_count;
-                            sum_cache[i] = (next_i < indices.size() ? sum_cache[next_i] : 0) + next_num;
-                            break;
-                        }
-                    }
-                }
-
-                // assign the out of bound index
-                for(; i != 0; --i)
-                {
-                    auto& count = counts[num_set[indices[i]] - min];
-                    auto& next_index = indices[i - 1];
-                    if(count > 0)
-                    {
-                        next_index = indices[i];
-                        --count;
-                    }
-                    else
-                    {
-                        next_index = indices[i] + 1;
-                        --counts[num_set[next_index] - min];
-                    }
-                    sum_cache[i - 1] = sum_cache[i] + num_set[next_index];
-                }
-            }
-        }
+        return nums.empty() ?
+               vector<vector<int>>{} :
+               multi_number_sum_impl<SumSize>(std::move(count_nums<SumSize>(nums)), sum_target);
     }
 
     template<int Min, size_t Size>
@@ -189,7 +203,7 @@ int main() noexcept
     {
         constexpr auto test_data = Solution::generate_test_data<-4, 9>();
 
-        for(const auto& result : Solution::fourSum(vector(test_data.cbegin(), test_data.cend()), 2))
+        for(const auto& result : Solution::fourSum({1,0,-1,0,-2,2}, 0))
         {
             for(const auto value : result) cout << value << '\t';
             cout << '\n';
