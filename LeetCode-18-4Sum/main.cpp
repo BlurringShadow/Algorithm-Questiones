@@ -68,17 +68,21 @@ public:
 
     template<size_t SumSize>
     static auto find_target(
-        const vector<pair<int, size_t>>& ordered_num_set,
+        vector<pair<int, size_t>>& ordered_num_set,
         array<size_t, SumSize - 1>& indices,
         const int target
     )
     {
         vector<int> result;
         auto& first_index = indices.front();
-        const auto [target_min, target_min_count] = ordered_num_set[first_index];
+        auto& [target_min, target_min_count] = ordered_num_set[first_index];
         // if target is less than our last index in number set,
         // than discard to prevent duplication
-        if(target < target_min) first_index = ordered_num_set.size() - 1;
+        if(target < target_min)
+        {
+            first_index = ordered_num_set.size();
+            ++target_min_count;
+        }
         else if(std::binary_search(
             ordered_num_set.cbegin() + first_index + (target_min_count == 0),
             ordered_num_set.cend(),
@@ -124,19 +128,10 @@ public:
             for(; i != 0; --i)
             {
                 const auto previous_index = indices[i];
-                auto& count = ordered_num_set[previous_index].second;
-                auto& next_index = indices[i - 1];
-                if(count > 0)
-                {
-                    next_index = previous_index;
-                    --count;
-                }
-                else
-                {
-                    next_index = previous_index + 1;
-                    --ordered_num_set[next_index].second;
-                }
-                sum_cache[i - 1] = sum_cache[i] + ordered_num_set[next_index].first;
+                auto& [next_num, next_num_count] =
+                    ordered_num_set[(indices[i - 1] = previous_index + (ordered_num_set[previous_index].second == 0))];
+                --next_num_count;
+                sum_cache[i - 1] = sum_cache[i] + next_num;
             }
 
             // find the target number
@@ -146,7 +141,7 @@ public:
             }
 
             // increase the indices
-            for(i = 0;; ++i)
+            for(i = indices.front() == num_size;; ++i)
             {
                 if(i == indices.size()) return result_set;
 
@@ -181,7 +176,7 @@ public:
     static vector<vector<int>> multi_number_sum(const vector<int>& nums, const int sum_target)
     {
         static_assert(SumSize >= 2, "Sum size should larger than 0");
-        return nums.empty() ?
+        return nums.size() < SumSize ?
                vector<vector<int>>{} :
                multi_number_sum_impl<SumSize>(std::move(count_nums<SumSize>(nums)), sum_target);
     }
@@ -203,7 +198,7 @@ int main() noexcept
     {
         constexpr auto test_data = Solution::generate_test_data<-4, 9>();
 
-        for(const auto& result : Solution::fourSum({1,0,-1,0,-2,2}, 0))
+        for(const auto& result : Solution::fourSum({-1, 0, 0, 3, 4}, 8))
         {
             for(const auto value : result) cout << value << '\t';
             cout << '\n';
