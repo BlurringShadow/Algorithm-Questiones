@@ -30,7 +30,6 @@ class Solution
     }();
 
 public:
-
     // ReSharper disable once CppInconsistentNaming
     static vector<vector<int>> fourSum(vector<int>& nums, const int target)
     {
@@ -51,8 +50,6 @@ public:
         auto&& first_num_it = num_begin + first_index;
 
         // if target is less than our last index in number set, than discard to prevent duplication
-        bool jump = target <= *first_num_it ? true : false;
-
         if(std::binary_search(++first_num_it, num_end, target))
         {
             result.resize(SumSize, target);
@@ -64,7 +61,7 @@ public:
             );
         }
 
-        return tuple{result, jump};
+        return tuple{result, target <= *first_num_it};
     }
 
     template<size_t SumSize>
@@ -81,11 +78,10 @@ public:
         array<size_t, SumSize - 1> indices{};
         size_t last_increase_pos = indices.size() - 1;
 
-        const auto& indices_begin = indices.cbegin();
-        const auto& indices_end = indices.cend();
+        const auto& indices_cbegin = indices.cbegin();
+        const auto& indices_cend = indices.cend();
 
         // initialization
-        indices.back() = 0;
         sum_cache.back() = *num_begin;
 
         while(true)
@@ -97,7 +93,7 @@ public:
 
             // find the target number
             auto&& [result, jump] =
-                find_target<SumSize>(num_begin, num_end, indices_begin, indices_end, sum_target - sum_cache[0]);
+                find_target<SumSize>(num_begin, num_end, indices_cbegin, indices_cend, sum_target - sum_cache[0]);
             if(!result.empty()) result_set.emplace_back(std::move(result));
 
             // increase the indices
@@ -149,9 +145,9 @@ int main() noexcept
 {
     try
     {
-        vector<int> test_data = {0, 0, 0, 0};
+        vector<int> test_data = {-2, -1, 0, 0, 1, 2};
 
-        for(const auto& result : Solution::fourSum(test_data, 1))
+        for(const auto& result : Solution::fourSum(test_data, 0))
         {
             for(const auto value : result) cout << value << '\t';
             cout << '\n';
