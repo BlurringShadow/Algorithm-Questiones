@@ -9,11 +9,13 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <string>
 #include <vector>
 
 using std::array;
 using std::cout;
 using std::size_t;
+using std::string;
 using std::tuple;
 using std::vector;
 
@@ -28,13 +30,6 @@ class Solution
 
         return 0;
     }();
-
-public:
-    // ReSharper disable once CppInconsistentNaming
-    static vector<vector<int>> fourSum(vector<int>& nums, const int target)
-    {
-        return multi_number_sum<4>(nums, target);
-    }
 
     template<size_t SumSize>
     static auto find_target(
@@ -65,60 +60,131 @@ public:
     }
 
     template<size_t SumSize>
+    static auto increase_index(
+        const int sum_target,
+        const vector<int>::const_iterator& num_begin,
+        const vector<int>::const_iterator& num_end,
+        array<int, SumSize - 1>& sum_cache,
+        const typename array<size_t, SumSize - 1>::iterator& indices_begin,
+        const typename array<size_t, SumSize - 1>::iterator& indices_end,
+        const size_t current_index_pos
+    )
+    {
+        const auto last_index = static_cast<size_t>(num_end - num_begin - 1);
+        const auto next_index_pos = current_index_pos + 1;
+        auto& current_index = *(indices_begin + current_index_pos);
+        const size_t indices_size = indices_end - indices_begin;
+        vector<vector<int>> result_set;
+
+        while(true)
+        {
+            current_index =
+                std::upper_bound(num_begin + current_index + 1, num_end, *(num_begin + current_index)) - num_begin;
+
+            // check if available index count is larger than current pos
+            if(last_index - current_index <= current_index_pos) break;
+
+            if(!result_set.empty()) return tuple{true, result_set};
+
+            // check possible largest sum is larger than target
+            for(auto i = decltype(current_index_pos){0}, num_index = last_index - 1;
+                i != current_index_pos;
+                ++i, --num_index)
+                *(indices_begin + i) = num_index;
+
+            sum_cache[current_index_pos] =
+                (next_index_pos < indices_size ? sum_cache[next_index_pos] : 0) + *(num_begin + current_index);
+            for(auto i = current_index_pos; i != 0; --i)
+                sum_cache[i - 1] =
+                    sum_cache[i] + *(num_begin + *(indices_begin + i - 1));
+
+            const auto largest_sum = sum_cache[0] + *(num_end - 1);
+            if(largest_sum == sum_target)
+            {
+                result_set.emplace_back(vector<int>(SumSize));
+                std::transform(
+                    std::make_reverse_iterator(indices_end),
+                    std::make_reverse_iterator(indices_begin),
+                    result_set.back().begin(),
+                    [&](const auto index) { return *(num_begin + index); }
+                );
+            }
+            if(largest_sum > sum_target) return tuple{true, result_set};
+        }
+
+        return tuple{false, result_set};
+    }
+
+    template<size_t SumSize>
+    static void indices_initialize(
+        const vector<int>& sorted_nums,
+        array<int, SumSize - 1>& sum_cache,
+        array<size_t, SumSize - 1>& indices,
+        const size_t last_increase_pos
+    )
+    {
+        for(auto i = last_increase_pos; i != 0; --i)
+            sum_cache[i - 1] =
+                sum_cache[i] + sorted_nums[(indices[i - 1] = indices[i] + 1)];
+    }
+
+    template<size_t SumSize>
     static vector<vector<int>> multi_number_sum_impl(const vector<int>& sorted_nums, const int sum_target)
     {
         vector<vector<int>> result_set;
 
-        const auto num_size = sorted_nums.size();
         const auto& num_begin = sorted_nums.cbegin();
         const auto& num_end = sorted_nums.cend();
-        const auto last_index = num_size - 1;
 
         array<int, SumSize - 1> sum_cache{};
         array<size_t, SumSize - 1> indices{};
-        size_t last_increase_pos = indices.size() - 1;
 
-        const auto& indices_cbegin = indices.cbegin();
-        const auto& indices_cend = indices.cend();
+        const auto& indices_begin = indices.begin();
+        const auto& indices_end = indices.end();
+
+        size_t last_increase_pos = indices.size() - 1;
 
         // initialization
         sum_cache.back() = *num_begin;
-
         while(true)
         {
             // assign the out of bound index
-            for(auto i = last_increase_pos; i != 0; --i)
-                sum_cache[i - 1] =
-                    sum_cache[i] + sorted_nums[(indices[i - 1] = indices[i] + 1)];
+            indices_initialize<SumSize>(sorted_nums, sum_cache, indices, last_increase_pos);
+
+            bool jump;
 
             // find the target number
-            auto&& [result, jump] =
-                find_target<SumSize>(num_begin, num_end, indices_cbegin, indices_cend, sum_target - sum_cache[0]);
-            if(!result.empty()) result_set.emplace_back(std::move(result));
+            {
+                auto&& [result, is_too_large] =
+                    find_target<SumSize>(num_begin, num_end, indices_begin, indices_end, sum_target - sum_cache[0]);
+                if(!result.empty()) result_set.emplace_back(std::move(result));
+                jump = is_too_large;
+            }
 
             // increase the indices
-            for(last_increase_pos = jump ? last_increase_pos + 1 : 0;; ++last_increase_pos)
+            for(last_increase_pos = jump ? last_increase_pos + 1 : 0; ; ++last_increase_pos)
             {
                 if(last_increase_pos == indices.size()) return result_set;
-
-                auto& index = indices[last_increase_pos];
-                const size_t next_index = std::distance(
+                auto&& [is_accepted, results] = increase_index<SumSize>(
+                    sum_target,
                     num_begin,
-                    std::upper_bound(num_begin + index + 1, num_end, sorted_nums[index])
+                    num_end,
+                    sum_cache,
+                    indices_begin,
+                    indices_end,
+                    last_increase_pos
                 );
-
-                // check if available index count is larger than current pos
-                if(next_index <= last_index && last_index - next_index > last_increase_pos)
-                {
-                    const auto next_i = last_increase_pos + 1;
-
-                    index = next_index;
-                    sum_cache[last_increase_pos] = (next_i < indices.size() ? sum_cache[next_i] : 0) + sorted_nums[
-                        next_index];
-                    break;
-                }
+                for(auto&& result : results) result_set.emplace_back(std::move(result));
+                if(is_accepted) break;
             }
         }
+    }
+
+public:
+    // ReSharper disable once CppInconsistentNaming
+    static vector<vector<int>> fourSum(vector<int>& nums, const int target)
+    {
+        return multi_number_sum<4>(nums, target);
     }
 
     template<size_t SumSize>
@@ -129,16 +195,6 @@ public:
         std::sort(nums.begin(), nums.end());
         return multi_number_sum_impl<SumSize>(std::move(nums), sum_target);
     }
-
-    template<int Min, size_t Size>
-    static constexpr auto generate_test_data()
-    {
-        array<int, 4 * Size> data{};
-        size_t index = 0;
-        auto num = Min;
-        for(size_t i = 0; i < Size; ++i, ++num) for(auto j = 0; j < 4; ++j) data[index++] = num;
-        return data;
-    }
 };
 
 int main() noexcept
@@ -146,12 +202,15 @@ int main() noexcept
     try
     {
         vector<int> test_data = {-2, -1, 0, 0, 1, 2};
+        string output;
 
         for(const auto& result : Solution::fourSum(test_data, 0))
         {
-            for(const auto value : result) cout << value << '\t';
-            cout << '\n';
+            for(const auto value : result) output += std::to_string(value) + '\t';
+            output += '\n';
         }
+
+        cout << output;
     }
     catch(const std::exception& e) { cout << e.what(); }
     return 0;
