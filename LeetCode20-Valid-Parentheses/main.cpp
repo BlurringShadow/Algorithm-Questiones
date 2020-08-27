@@ -1,6 +1,17 @@
 /*
- * https://leetcode.com/problems/remove-nth-node-from-end-of-list/
- * Given a linked list, remove the n-th node from the end of list and return its head.
+ * https://leetcode.com/problems/valid-parentheses/
+ * Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+ * An input string is valid if:
+    * Open brackets must be closed by the same type of brackets.
+    * Open brackets must be closed in the correct order.
+    * String is empty
+ * Examples :
+ * Input    Output
+ * "()"     true
+ * "()[]{}" true
+ * "(]"     false
+ * "([)]"   false
+ * "{[]}"   true
 */
 
 #include <array>
