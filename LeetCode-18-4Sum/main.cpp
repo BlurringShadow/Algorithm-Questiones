@@ -119,7 +119,7 @@ class Solution
 
     template<size_t SumSize>
     static void indices_initialize(
-        const vector<int>& sorted_nums,
+        const vector<int>::const_iterator& num_begin,
         array<int, SumSize - 1>& sum_cache,
         array<size_t, SumSize - 1>& indices,
         const size_t last_increase_pos
@@ -127,16 +127,17 @@ class Solution
     {
         for(auto i = last_increase_pos; i != 0; --i)
             sum_cache[i - 1] =
-                sum_cache[i] + sorted_nums[(indices[i - 1] = indices[i] + 1)];
+                sum_cache[i] + *(num_begin + (indices[i - 1] = indices[i] + 1));
     }
 
     template<size_t SumSize>
-    static vector<vector<int>> multi_number_sum_impl(const vector<int>& sorted_nums, const int sum_target)
+    static vector<vector<int>> multi_number_sum_impl(
+        const vector<int>::const_iterator& num_begin,
+        const vector<int>::const_iterator& num_end, 
+        const int sum_target
+    )
     {
         vector<vector<int>> result_set;
-
-        const auto& num_begin = sorted_nums.cbegin();
-        const auto& num_end = sorted_nums.cend();
 
         array<int, SumSize - 1> sum_cache{};
         array<size_t, SumSize - 1> indices{};
@@ -151,7 +152,7 @@ class Solution
         while(true)
         {
             // assign the out of bound index
-            indices_initialize<SumSize>(sorted_nums, sum_cache, indices, last_increase_pos);
+            indices_initialize<SumSize>(num_begin, sum_cache, indices, last_increase_pos);
 
             bool jump;
 
@@ -195,7 +196,7 @@ public:
         static_assert(SumSize >= 2, "Sum size should larger than 0");
         if(nums.size() < SumSize) return vector<vector<int>>{};
         std::sort(nums.begin(), nums.end());
-        return multi_number_sum_impl<SumSize>(std::move(nums), sum_target);
+        return multi_number_sum_impl<SumSize>(nums.cbegin(), nums.cend(), sum_target);
     }
 };
 
@@ -204,11 +205,9 @@ int main() noexcept
     try
     {
         vector<tuple<vector<int>, int>> test_data = {
-            /*
             {{0, 0, 0, 0}, 1},
             {{-1, -2, 0, 0, 1, 2}, 0},
             {{-3, -2, -1, 0, 1, 2, 3}, 0},
-            */
             {{-3, -2, -1, 0, 0, 1, 2, 3}, 0}
         };
         string output;

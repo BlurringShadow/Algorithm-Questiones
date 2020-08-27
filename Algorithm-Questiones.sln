@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-17-Letter-Combinat
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-18-4Sum", "LeetCode-18-4Sum\LeetCode-18-4Sum.vcxproj", "{7779FE12-5531-482F-AED1-68BEA5C74338}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-19-Remove-Nth-Node-From-End-of-List", "LeetCode-19-Remove-Nth-Node-From-End-of-List\LeetCode-19-Remove-Nth-Node-From-End-of-List.vcxproj", "{1149FED0-4E72-4576-8F34-A0624957877C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -116,6 +118,10 @@ Global
 		{7779FE12-5531-482F-AED1-68BEA5C74338}.Debug|x64.Build.0 = Debug|x64
 		{7779FE12-5531-482F-AED1-68BEA5C74338}.Release|x64.ActiveCfg = Release|x64
 		{7779FE12-5531-482F-AED1-68BEA5C74338}.Release|x64.Build.0 = Release|x64
+		{1149FED0-4E72-4576-8F34-A0624957877C}.Debug|x64.ActiveCfg = Debug|x64
+		{1149FED0-4E72-4576-8F34-A0624957877C}.Debug|x64.Build.0 = Debug|x64
+		{1149FED0-4E72-4576-8F34-A0624957877C}.Release|x64.ActiveCfg = Release|x64
+		{1149FED0-4E72-4576-8F34-A0624957877C}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
