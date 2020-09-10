@@ -13,15 +13,21 @@
  * "([)]"   false
  * "{[]}"   true
 */
-// test git comment
+
 #include <array>
 #include <iostream>
+#include <stack>
 #include <string>
+#include <string_view>
+#include <vector>
 
 using std::array;
 using std::cout;
 using std::size_t;
 using std::string;
+using std::string_view;
+using std::vector;
+using std::stack;
 using namespace std::literals;
 
 class Solution
@@ -36,20 +42,47 @@ class Solution
     }();
 
 public:
+
     // ReSharper disable once CppInconsistentNaming
-    static bool isValid(string&) { return true; }
+    static bool isValid(const string_view& str)
+    {
+        static constexpr auto matches = []()
+        {
+            array<char, std::numeric_limits<char>::max() + 1> m{};
+            m[')'] = '(';
+            m[']'] = '[';
+            m['}'] = '{';
+
+            return m;
+        }();
+        static constexpr auto cend = matches.cend();
+
+        stack<char> match_stack;
+
+        for(const auto c : str)
+        {
+            const auto match = matches[c];
+            if(match == char{}) match_stack.push(c);
+            else
+            {
+                if(match_stack.empty() || match_stack.top() != match) return false;
+                match_stack.pop();
+            }
+        }
+
+        return match_stack.empty();
+    }
 };
 
 int main() noexcept
 {
     try
     {
-        constexpr auto nodes_size = 5;
-        array<string, nodes_size> test_data;
+        vector<string> test_data{"((", "()", "()[]{}", "(]", "([)]", "{[]}", "("};
         string output;
 
-        for(auto& str : test_data) 
-            output += "str: {"s + str + "}\tpos:\tresults:" + 
+        for(const auto& str : test_data) 
+            output += "str: " + str + "\tresults:" + 
                 std::to_string(Solution::isValid(str)) + "\n\n";
         cout << output;
     }
