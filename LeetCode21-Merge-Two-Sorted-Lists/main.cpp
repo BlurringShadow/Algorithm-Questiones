@@ -4,18 +4,17 @@
  * The new list should be made by splicing together the nodes of the first two lists.
 */
 
-#include <array>
 #include <iostream>
+#include <queue>
 #include <string>
 #include <vector>
 
-using std::array;
 using std::pair;
 using std::cout;
 using std::size_t;
 using std::string;
 using std::vector;
-using std::initializer_list;
+using std::queue;
 using namespace std::literals;
 
 
@@ -40,42 +39,91 @@ class Solution
     }();
 
 public:
-
     // ReSharper disable once CppInconsistentNaming
-    static ListNode* mergeTwoLists(ListNode* l1, ListNode* l2)
+    static ListNode* mergeTwoLists(ListNode* const l1, ListNode* l2)
     {
         if(l1 == nullptr) return l2;
         if(l2 == nullptr) return l1;
 
-        vector<int> l1_nums;
-        auto head = l1;
-        for(; head->next != nullptr; head = head->next) l1_nums.emplace_back(head->val);
-        head->next = l2;
-        l1_nums.emplace_back(head->val);
-
-        if(l1_nums.back() > l2->val)
+        queue<int> l1_nums;
+        auto first_head = l1, second_head = l2;
         {
-            const auto l1_size = l1_nums.size();
-            head = l1;
-            size_t i;
-            for(i = 0; i < l1_size && l2 != nullptr; head = head->next)
+            decltype(first_head) previous_head = nullptr;
+            for(; first_head != nullptr; previous_head = first_head, first_head = first_head->next)
             {
-                const auto l1_num = l1_nums[i];
-                const auto l2_num = l2->val;
-                if(l1_num < l2_num)
+                const auto l2_num = second_head->val;
+
+                if(l1_nums.empty())
                 {
-                    head->val = l1_num;
-                    ++i;                
+                    const auto l1_num = first_head->val;
+                    if(l1_num > l2_num)
+                    {
+                        l1_nums.push(first_head->val);
+                        first_head->val = l2_num;
+                        second_head = second_head->next;
+                    }
                 }
                 else
                 {
-                    head->val = l2_num;
-                    l2 = l2->next;
+                    const auto l1_num = l1_nums.front();
+                    l1_nums.push(first_head->val);
+                    if(l1_num < l2_num)
+                    {
+                        first_head->val = l1_num;
+                        l1_nums.pop();
+                    }
+                    else
+                    {
+                        first_head->val = l2_num;
+                        second_head = second_head->next;
+                    }
+                }
+
+                if(second_head == nullptr)
+                {
+                    previous_head = first_head;
+                    for(first_head = first_head->next;
+                        first_head != nullptr;
+                        previous_head = first_head, first_head = first_head->next, l1_nums.pop())
+                    {
+                        auto& v = first_head->val;
+                        l1_nums.push(v);
+                        v = l1_nums.front();
+                    }
+                    previous_head->next = l2;
+                    for(first_head = l2; first_head != nullptr; first_head = first_head->next, l1_nums.pop())
+                    {
+                        first_head->val = l1_nums.front();
+                    }
+                    return l1;
                 }
             }
+            previous_head->next = l2;
+        }
 
-            if(l2 == nullptr) for(; head != nullptr; head = head->next, ++i) head->val = l1_nums[i];
-            else for(; head != nullptr; head = head->next, l2 = l2->next) head->val = l2->val;
+        for(first_head = l2; ; first_head = first_head->next)
+        {
+            if(l1_nums.empty()) break;
+
+            const auto l1_num = l1_nums.front();
+            const auto l2_num = second_head->val;
+
+            if(l1_num < l2_num)
+            {
+                first_head->val = l1_num;
+                l1_nums.pop();
+            }
+            else
+            {
+                first_head->val = l2_num;
+                second_head = second_head->next;
+                if(second_head == nullptr)
+                {
+                    for(first_head = first_head->next; first_head != nullptr; first_head = first_head->next, l1_nums.
+                        pop()) { first_head->val = l1_nums.front(); }
+                    break;
+                }
+            }
         }
 
         return l1;
@@ -98,6 +146,8 @@ int main() noexcept
     {
         vector<pair<vector<int>, vector<int>>> test_data
         {
+            {{2}, {1}},
+            {{-10, -10, -9, -4, 1, 6, 6}, {-7}},
             {{1, 2, 4}, {1, 3, 4}},
             {{1}, {}}
         };
