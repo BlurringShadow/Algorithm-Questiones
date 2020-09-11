@@ -3,9 +3,8 @@
  * Merge two sorted linked lists and return it as a new sorted list.
  * The new list should be made by splicing together the nodes of the first two lists.
 */
-
+#define var decltype(auto)
 #include <iostream>
-#include <queue>
 #include <string>
 #include <vector>
 
@@ -14,7 +13,6 @@ using std::cout;
 using std::size_t;
 using std::string;
 using std::vector;
-using std::queue;
 using namespace std::literals;
 
 
@@ -40,93 +38,29 @@ class Solution
 
 public:
     // ReSharper disable once CppInconsistentNaming
-    static ListNode* mergeTwoLists(ListNode* const l1, ListNode* l2)
+    static ListNode* mergeTwoLists(ListNode* first_n, ListNode* second_n)
     {
-        if(l1 == nullptr) return l2;
-        if(l2 == nullptr) return l1;
-
-        queue<int> l1_nums;
-        auto first_head = l1, second_head = l2;
+        ListNode head{};
+        for(auto current = &head;; current = current->next)
         {
-            decltype(first_head) previous_head = nullptr;
-            for(; first_head != nullptr; previous_head = first_head, first_head = first_head->next)
+            auto& next = current->next;
+            if(first_n == nullptr)
             {
-                const auto l2_num = second_head->val;
-
-                if(l1_nums.empty())
-                {
-                    const auto l1_num = first_head->val;
-                    if(l1_num > l2_num)
-                    {
-                        l1_nums.push(first_head->val);
-                        first_head->val = l2_num;
-                        second_head = second_head->next;
-                    }
-                }
-                else
-                {
-                    const auto l1_num = l1_nums.front();
-                    l1_nums.push(first_head->val);
-                    if(l1_num < l2_num)
-                    {
-                        first_head->val = l1_num;
-                        l1_nums.pop();
-                    }
-                    else
-                    {
-                        first_head->val = l2_num;
-                        second_head = second_head->next;
-                    }
-                }
-
-                if(second_head == nullptr)
-                {
-                    previous_head = first_head;
-                    for(first_head = first_head->next;
-                        first_head != nullptr;
-                        previous_head = first_head, first_head = first_head->next, l1_nums.pop())
-                    {
-                        auto& v = first_head->val;
-                        l1_nums.push(v);
-                        v = l1_nums.front();
-                    }
-                    previous_head->next = l2;
-                    for(first_head = l2; first_head != nullptr; first_head = first_head->next, l1_nums.pop())
-                    {
-                        first_head->val = l1_nums.front();
-                    }
-                    return l1;
-                }
+                next = second_n;
+                break;
             }
-            previous_head->next = l2;
+            if(second_n == nullptr)
+            {
+                next = first_n;
+                break;
+            }
+
+            auto& n = first_n->val > second_n->val ? second_n : first_n;
+            next = n;
+            n = n->next;
         }
 
-        for(first_head = l2; ; first_head = first_head->next)
-        {
-            if(l1_nums.empty()) break;
-
-            const auto l1_num = l1_nums.front();
-            const auto l2_num = second_head->val;
-
-            if(l1_num < l2_num)
-            {
-                first_head->val = l1_num;
-                l1_nums.pop();
-            }
-            else
-            {
-                first_head->val = l2_num;
-                second_head = second_head->next;
-                if(second_head == nullptr)
-                {
-                    for(first_head = first_head->next; first_head != nullptr; first_head = first_head->next, l1_nums.
-                        pop()) { first_head->val = l1_nums.front(); }
-                    break;
-                }
-            }
-        }
-
-        return l1;
+        return head.next;
     }
 };
 
