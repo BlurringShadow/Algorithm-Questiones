@@ -78,7 +78,7 @@ public:
     }
 };
 
-constexpr auto to_identical = [](const auto& t) { return t; };
+constexpr auto to_identical = []<typename T>(T&& value) { return std::forward<T>(value); };
 
 template<typename T, typename Input, typename Output>
 concept Converter = std::invocable<T, Input> && std::convertible_to<std::invoke_result_t<T, Input>, Output>;
@@ -92,8 +92,8 @@ template<
 >
 static void test_run(
     const InputRange& input_data,
-    InputConverter input_converter,
     Func func,
+    InputConverter input_converter = to_identical,
     OutputConverter output_converter = to_identical,
     const std::string_view& format_str = "{}\n"
 )
@@ -130,6 +130,7 @@ int main()
 
         test_run<Solution::input_type>(
             test_data_list,
+            Solution::mergeKLists,
             [&](const input_type& data)
             {
                 Solution::input_type nodes(data.size());
@@ -153,7 +154,6 @@ int main()
 
                 return nodes;
             },
-            Solution::mergeKLists,
             [](ListNode* ptr)
             {
                 string output;
