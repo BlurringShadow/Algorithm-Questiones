@@ -42,7 +42,7 @@ class Solution
                 for(const auto& s1 : generated_[j])
                     for(const auto& s2 : generated_[i - 1 - j])
                     {
-                        auto str = '(' + s1;
+                        auto&& str = '(' + s1;
                         str += ')' + s2;
                         generated_[i].emplace_back(std::move(str));
                     }

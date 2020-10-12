@@ -46,6 +46,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode21-Merge-Two-Sorted
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode22-Generate-Parentheses", "LeetCode22-Generate-Parentheses\LeetCode22-Generate-Parentheses.vcxproj", "{396E649A-F752-4EDE-9C67-D971781ADA71}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode23-Merge-k-Sorted-Lists", "LeetCode23-Merge-k-Sorted-Lists\LeetCode23-Merge-k-Sorted-Lists.vcxproj", "{CD3DB125-D596-4064-8F8D-206CF0D13677}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -140,6 +142,10 @@ Global
 		{396E649A-F752-4EDE-9C67-D971781ADA71}.Debug|x64.Build.0 = Debug|x64
 		{396E649A-F752-4EDE-9C67-D971781ADA71}.Release|x64.ActiveCfg = Release|x64
 		{396E649A-F752-4EDE-9C67-D971781ADA71}.Release|x64.Build.0 = Release|x64
+		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Debug|x64.ActiveCfg = Debug|x64
+		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Debug|x64.Build.0 = Debug|x64
+		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Release|x64.ActiveCfg = Release|x64
+		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
