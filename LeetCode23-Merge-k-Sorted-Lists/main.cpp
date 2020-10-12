@@ -153,7 +153,7 @@ int main()
 
                 return nodes;
             },
-            [](Solution::input_type t) { return Solution::mergeKLists(std::move(t)); },
+            Solution::mergeKLists,
             [](ListNode* ptr)
             {
                 string output;
