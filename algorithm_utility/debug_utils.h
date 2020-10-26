@@ -1,12 +1,22 @@
+﻿// Created by BlurringShadow at 2020-10-26-上午 10:09
+
 #pragma once
+#include <chrono>
 #include <concepts>
 #include <ranges>
 #include <string>
 
 #include <fmt/format.h>
 
-using std::string;
-using namespace std::literals;
+struct counter
+{
+    const std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+    ~counter()
+    {
+        fmt::print("{}ms\n", std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start_time).count());
+    }
+};
 
 constexpr auto to_identical = []<typename T>(T&& value) { return std::forward<T>(value); };
 
@@ -18,7 +28,7 @@ template<
     std::ranges::input_range InputRange,
     Converter<std::ranges::range_value_t<InputRange>, ParameterType...> InputConverter,
     std::invocable<ParameterType...> Func,
-    Converter<std::invoke_result_t<Func, ParameterType...>, string> OutputConverter
+    Converter<std::invoke_result_t<Func, ParameterType...>, std::string> OutputConverter
 >
 static void test_run(
     const InputRange& input_data,
@@ -28,7 +38,7 @@ static void test_run(
     const std::string_view format_str = "{}\n"
 )
 {
-    string output;
+    std::string output;
     for(auto& input : input_data)
     {
         auto&& converted = input_converter(input);
