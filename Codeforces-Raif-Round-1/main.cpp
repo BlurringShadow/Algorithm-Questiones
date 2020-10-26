@@ -1,40 +1,26 @@
+// Created by BlurringShadow at 2020-10-20-下午 1:46
+
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <initializer_list>
-#include <iostream>
-#include <optional>
-#include <stack>
-#include <string>
-#include <string_view>
-#include <unordered_map>
+#include <list>
 #include <unordered_set>
 #include <utility>
-#include <vector>
 
-using std::cout;
-using std::cin;
+#include "../algorithm_utility/utils.h"
+
+#ifndef NDEBUG
+#include "../algorithm_utility/debug_utils.h"
+#endif
+
 using std::array;
-using std::stack;
-using std::size_t;
-using std::string;
 using std::string_view;
 using std::initializer_list;
-using std::vector;
 using std::uint8_t;
 using std::pair;
-using std::optional;
 using std::unordered_set;
-using std::unordered_map;
-
-[[maybe_unused]] static const auto _ = []()
-{
-    std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
-    std::cout.tie(nullptr);
-
-    return 0;
-}();
+using std::list;
 
 // Problem A
 class rabbit_move_box
@@ -320,95 +306,156 @@ public:
     using bounce_count_t = uint8_t;
 
 private:
+    struct coordinate
+    {
+        size_t row, col;
+    };
+
+    // presentation of a valid chain, as like "(3...)(2)1"
+    struct chain
+    {
+        // 1(2)(3...)
+        vector<size_t> column_indices;
+
+        bool has_two;
+
+        [[nodiscard]] auto place_boomerang(size_t available_row_start) const
+        {
+            const auto indices_size = column_indices.size();
+            vector<coordinate> boomerangs(2 * indices_size - 1 - has_two);
+            auto add_boomerang = [&, boomerangs_it = boomerangs.begin()](const size_t col)mutable
+            {
+                *boomerangs_it++ = {available_row_start, col};
+            };
+            {
+                // X...X
+                auto i = indices_size - 1;
+                for(; i > static_cast<decltype(i)>(has_two); --i)
+                {
+                    add_boomerang(column_indices[i]);
+                    add_boomerang(column_indices[i - 1]);
+                    ++available_row_start;
+                }
+                // X...X
+                //     X
+                add_boomerang(column_indices[i]);
+            }
+
+            // X...X
+            if(has_two) add_boomerang(column_indices.front());
+
+            return boomerangs;
+        }
+    };
+
+    using chain_list_t = vector<chain>;
+
     vector<bounce_count_t> bounce_times_;
 
-    static void generate_output(string& output, const size_t r, const size_t c)
+    /**
+     * \brief
+     * Resolve the chain.
+     *
+     * As the chain list, three_end_index is 1 or 0.
+     *
+     * If three_end_index is 1, element(chain_list[0]) will be like 3...(2)1.
+     *
+     * 2 is optional.
+     *
+     * From chain_list[three_end_index] to chain_list[two_end_index], elements will be like
+     * 2...1
+     *
+     * At last from chain_list[two_end_index] to chain_list[chain_list.size() - 1], elements will only contain 1
+     * \param col which col to resolve
+     * \param chain_list input chain list
+     * \param three_end_index end index of chain contain 3
+     * \param two_end_index end index of chain contain 2
+     * \return whether the column resolve successfully
+     */
+    bool resolve_column(
+        const size_t col,
+        chain_list_t& chain_list,
+        size_t& three_end_index,
+        size_t& two_end_index
+    ) const
     {
-        const auto left = std::to_string(r + 1);
-        const auto right = std::to_string(c + 1);
-        output.reserve(output.size() + 2 + left.size() + right.size());
-        output.append(left).append(" ").append(right).append("\n");
+        switch(bounce_times_[col])
+        {
+            // 1 should be the first of chain
+        case 1: chain_list.push_back({initializer_list<size_t>{col}});
+            // ignore 0
+        case 0: break;
+            // 2 should only just appear latter than 1 
+        case 2:
+            {
+                if(two_end_index < three_end_index) two_end_index = three_end_index;
+                if(chain_list.size() <= two_end_index) return false;
+
+                auto& chain = chain_list[two_end_index++];
+                chain.has_two = true;
+                chain.column_indices.emplace_back(col);
+            }
+            break;
+            // 3 is the last
+        case 3:
+            {
+                if(chain_list.empty()) return false;
+                if(three_end_index == 0) ++three_end_index;
+                chain_list.front().column_indices.emplace_back(col);
+            }
+            break;
+        }
+
+        return true;
     }
 
-    [[nodiscard]] pair<bool, vector<vector<size_t>>> find_chains() const
+    [[nodiscard]] auto find_chains() const
     {
         const auto bounce_times_count = bounce_times_.size();
-        vector<vector<size_t>> completed_chains;
-        vector<vector<size_t>> chains;
-        for(size_t i = 0; i < bounce_times_count; ++i)
-        {
-            const auto current_bounce_count = bounce_times_[i];
-            if(current_bounce_count == 0) continue;
+        chain_list_t chain_list;
+        size_t three_end_index = 0, two_end_index = 0;
 
-            const auto& chain_it = std::find_if(
-                chains.begin(),
-                chains.end(),
-                [current_bounce_count, &bounce_times = bounce_times_](decltype(chains)::const_reference chain)
-                {
-                    const auto last_bounce_count = bounce_times[chain.back()];
-                    return current_bounce_count == 3 ? last_bounce_count == 3 : current_bounce_count < last_bounce_count;
-                }
-            );
-            if(chain_it == chains.cend())
-            {
-                if(current_bounce_count == 1) completed_chains.emplace_back(initializer_list<size_t>{1}); // chain is ended by 1
-                else chains.emplace_back(initializer_list<size_t>{i});
-            }
-            else
-            {
-                auto& chain = *chain_it;
-                chain.emplace_back(i);
+        using return_t = pair<bool, decltype(chain_list)>;
 
-                // chain is ended by 1
-                if(current_bounce_count == 1)
-                {
-                    completed_chains.emplace_back(std::move(chain));
-                    chains.erase(chain_it);
-                }
-            }
-        }
+        for(auto i = bounce_times_count - 1; i < bounce_times_count; --i)
+            if(!resolve_column(i, chain_list, three_end_index, two_end_index))
+                return return_t{false, chain_list};
 
-        return {chains.empty(), completed_chains};
-    }
-
-    static void place_boomerang(string& output, const size_t r, const size_t c, size_t& count)
-    {
-        generate_output(output, r, c);
-        ++count;
-    }
-
-    [[nodiscard]] string place_boomerang_for_chains(const vector<vector<size_t>>& chains) const
-    {
-        string output = "\n";
-        size_t available_row_start_index = 0;
-        size_t boomerang_count = 0;
-        for(const auto& chain : chains)
-        {
-            bounce_count_t remain = 1;
-            for(const auto col : chain)
-            {
-                place_boomerang(output, available_row_start_index, col, boomerang_count);
-
-                --remain;
-                if(remain > 0) place_boomerang(output, ++available_row_start_index, col, boomerang_count);
-
-                remain = bounce_times_[col] - 1;
-            }
-
-            ++available_row_start_index;
-        }
-
-        return std::to_string(boomerang_count) + output;
+        return return_t{true, chain_list};
     }
 
 public:
     explicit bouncing_boomerangs(decltype(bounce_times_) bounce_times) : bounce_times_(std::move(bounce_times)) {}
 
-    // TODO TLE
     void solve() const
     {
+#ifndef NDEBUG
+        [[maybe_unused]] counter c_;
+#endif
+
         const auto& [is_valid, chains] = find_chains();
-        cout << (is_valid ? place_boomerang_for_chains(chains) : "-1\n");
+        if(!is_valid)
+        {
+            cout << "-1\n";
+            return;
+        }
+
+        size_t available_row_start = 0;
+        size_t coordinates_count = 0;
+        console_output_buffer_binder binder{};
+        for(const auto& chain : chains)
+        {
+            const auto& boomerangs = chain.place_boomerang(available_row_start);
+            available_row_start = boomerangs.back().row + 1;
+            coordinates_count += boomerangs.size();
+
+            for(const auto [row, col] : boomerangs) cout << row + 1 << ' ' << col + 1 << '\n';
+        }
+
+        {
+            auto front_scope = binder.scope_add_front();
+            cout << coordinates_count << '\n';
+        }
     }
 
     static void create_from_input()
@@ -426,12 +473,32 @@ public:
             cin >> temp;
             v = static_cast<decltype(values)::value_type>(temp);
         }
+
         bouncing_boomerangs{std::move(values)}.solve();
     }
 };
 
 int main()
 {
+#ifdef NDEBUG
     bouncing_boomerangs::create_from_input();
+#else
+    bouncing_boomerangs{{2, 0, 3, 0, 1, 1}}.solve();
+    bouncing_boomerangs{{0}}.solve();
+    bouncing_boomerangs{{3, 2, 2, 2, 1, 1}}.solve();
+    bouncing_boomerangs{{3, 2, 1}}.solve();
+    bouncing_boomerangs{{2, 2, 1, 1}}.solve();
+    bouncing_boomerangs{{3, 3, 2, 1}}.solve();
+    bouncing_boomerangs{{3, 3, 3, 1}}.solve();
+    bouncing_boomerangs{{3, 3, 2, 2, 1, 1}}.solve();
+    /*
+    {
+        vector<bouncing_boomerangs::bounce_count_t> values(100000, 2);
+        std::fill(values.begin() + values.size() / 2, values.end(), 1);
+        bouncing_boomerangs{std::move(values)}.solve();
+    }
+    */
+
+#endif
     return 0;
 }
