@@ -4,7 +4,6 @@
 #ifndef _DEBUG
 #define NDEBUG
 #endif
-#include <list>
 
 constexpr auto is_debug =
 #ifdef NDEBUG
@@ -78,12 +77,21 @@ public:
     }
 };
 
+template<typename From, typename To>
+struct is_convertible_to_ref : std::bool_constant<
+        std::is_convertible_v<From, std::decay_t<To>&&> ||
+        std::is_convertible_v<From, std::decay_t<To>&>
+    > {};
+
+template<typename From, typename To>
+constexpr auto is_convertible_to_ref_v = is_convertible_to_ref<From, To>::value;
+
 #ifdef __cpp_lib_concepts
 #include <concepts>
 #include <ranges>
 
 template<typename From, typename To>
-concept ConvertibleToRef = std::convertible_to<From, std::decay_t<To>&&> || std::convertible_to<From, std::decay_t<To>&>;
+concept ConvertibleToRef = is_convertible_to_ref_v<From, To>;
 
 template<typename T, ConvertibleToRef<std::istream> InputStream, typename... Args>
 requires requires(InputStream is, T t)
@@ -97,16 +105,55 @@ template<
     typename InputStream,
     typename... Args,
     std::enable_if_t<std::is_constructible_v<T, Args...>>* = nullptr,
-    std::enable_if_t<std::is_convertible_v<T, std::istream&&> || std::is_convertible_v<T, std::istream&>>* = nullptr
+    std::enable_if_t<is_convertible_to_ref_v<InputStream, std::istream>>* = nullptr
 >
 #endif
-T get_from_stream(InputStream&& is, Args&&... args)
+[[nodiscard]] T get_from_stream(InputStream&& is, Args&&... args)
 {
-    if constexpr(sizeof...(Args) > 0)
+    T t(std::forward<Args>(args)...);
+    is >> t;
+    return t;
+}
+
+template<typename T>
+struct auto_cast
+{
+    T&& t;
+
+#ifdef __cpp_lib_concepts
+    template<typename U> requires requires { static_cast<std::decay_t<U>>(std::forward<T>(t)); }
+#else
+    template<typename U, std::enable_if_t<std::is_convertible_v<T, std::decay_t<U>>>* = nullptr>
+#endif
+    constexpr operator U() noexcept(std::is_nothrow_constructible_v<T, std::decay_t<U>>)
     {
-        T t{(std::forward<Args>(args), ...)};
-        is >> t;
-        return t;       
+        return static_cast<std::decay_t<U>>(std::forward<T>(t));
     }
-    else return *std::istream_iterator<T>(is);
+};
+
+template<
+    typename ReturnT,
+    typename Left,
+    typename Right,
+    typename Op
+#ifdef __cpp_lib_concepts
+> requires std::convertible_to<std::conditional_t<
+    std::is_convertible_v<Left, ReturnT>,
+    std::invoke_result_t<Op, ReturnT, Right>,
+    std::invoke_result_t<Op, Left, ReturnT>
+>, ReturnT>
+#else
+    ,
+    std::enable_if_t<std::convertible_to<std::conditional_t<
+        std::is_convertible_v<Left, ReturnT>,
+        std::invoke_result_t<Op, ReturnT, Right>,
+        std::invoke_result_t<Op, Left, ReturnT>
+    >, ReturnT>>* = nullptr
+>
+#endif
+constexpr ReturnT cast_op(Left&& left, Right&& right, Op op)
+{
+    if constexpr(std::is_convertible_v<Left, ReturnT>)
+        return op(static_cast<ReturnT>(std::forward<Left>(left)), std::forward<Right>(right));
+    else return op(std::forward<Left>(left), static_cast<ReturnT>(std::forward<Right>(right)));
 }

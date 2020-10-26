@@ -13,6 +13,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="finding_sasuke.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}</ProjectGuid>
