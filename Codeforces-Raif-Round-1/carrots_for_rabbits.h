@@ -59,7 +59,7 @@ public:
             diff_ = min_split_cost(length_, cut_count_) - min_split_cost(length_, cut_count_ + 1);
         }
 
-        constexpr bool operator<(const carrot& right) const noexcept { return diff_ < right.diff_; }
+        constexpr auto operator<(const carrot& right) const noexcept { return diff_ < right.diff_; }
 
         [[nodiscard]] constexpr auto diff() const noexcept { return diff_; }
     };
