@@ -5,13 +5,18 @@
  * Merge all the linked-lists into one sorted linked-list and return it.
 */
 
-#include <algorithm>
-#include <functional>
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 
 #include <fmt/format.h>
+
+#ifdef __cpp_lib_ranges
+#include <algorithm>
+#else
+#include <boost/range/algorithm.hpp>
+#endif
 
 #ifdef __cpp_constinit
 #define CONSTINIT constinit  // NOLINT(cppcoreguidelines-macro-usage)
@@ -19,7 +24,14 @@
 #define CONSTINIT
 #endif
 
+#ifdef __cpp_lib_constexpr_vector
+#define CONST_VEC constexpr
+#else
+#define CONST_VEC const
+#endif
+
 using std::cout;
+using std::cin;
 using std::size_t;
 using std::string;
 using std::vector;
@@ -36,9 +48,8 @@ class Solution
     [[maybe_unused]] inline static const auto _ = []()
     {
         std::ios::sync_with_stdio(false);
-        std::cin.tie(nullptr);
-        std::cout.tie(nullptr);
-
+        cin.tie(nullptr);
+        cout.tie(nullptr);
         return 0;
     }();
 
@@ -48,7 +59,7 @@ public:
     // ReSharper disable once CppInconsistentNaming
     static ListNode* mergeKLists(vector<ListNode*> node_list)
     {
-        CONSTINIT ListNode head;
+        ListNode head;
         auto node_ptr = &head;
 #ifdef __cpp_lib_erase_if
         std::erase(node_list, nullptr);
@@ -107,7 +118,7 @@ static void test_run(
         else r = func(std::move(converted));
         output += fmt::format(format_str, output_converter(std::move(r)));
     }
-    cout << output << '\n';
+    fmt::print("{}\n", output);
 }
 
 int main()
@@ -116,15 +127,16 @@ int main()
     {
         using input_type = vector<vector<int>>;
 
-#ifdef __cpp_lib_constexpr_vector
-        constexpr
+#ifdef __cpp_lib_ranges
+#define RNG std::ranges
 #else
-        const
+#define RNG boost
 #endif
-            vector<input_type> test_data_list{
-                {{1, 2, 3}, {3, 4, 5}, {5, 6, 7}},
-                {{1, 3, 5}, {2, 4, 6}}
-            };
+
+        CONST_VEC vector<input_type> test_data_list{
+            {{1, 2, 3}, {3, 4, 5}, {5, 6, 7}},
+            {{1, 3, 5}, {2, 4, 6}}
+        };
 
         vector<std::unique_ptr<ListNode[]>> node_ptrs;
 
@@ -134,14 +146,14 @@ int main()
             [&](const input_type& data)
             {
                 Solution::input_type nodes(data.size());
-                std::ranges::transform(
+                RNG::transform(
                     data,
                     nodes.begin(),
                     [&](const auto& int_list)
                     {
                         node_ptrs.emplace_back(new ListNode[int_list.size()]);
                         auto& list_nodes = node_ptrs.back();
-                        std::ranges::transform(
+                        RNG::transform(
                             int_list,
                             list_nodes.get(),
                             [next = list_nodes.get()](const auto v) mutable { return ListNode{v, ++next}; }
