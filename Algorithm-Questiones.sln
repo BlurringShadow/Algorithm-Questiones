@@ -48,6 +48,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode22-Generate-Parenth
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode23-Merge-k-Sorted-Lists", "LeetCode23-Merge-k-Sorted-Lists\LeetCode23-Merge-k-Sorted-Lists.vcxproj", "{CD3DB125-D596-4064-8F8D-206CF0D13677}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Raif-Round-1", "Codeforces-Raif-Round-1\Codeforces-Raif-Round-1.vcxproj", "{8287EC22-9168-44AF-A6B9-5CE68C7B75A5}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-676", "Codeforces-Round-676\Codeforces-Round-676.vcxproj", "{D0E50F9E-56ED-4592-9638-676491188FF7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-678", "Codeforces-Round-678\Codeforces-Round-678.vcxproj", "{DC013B60-AB65-4F8C-B967-6969223C0503}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-679", "Codeforces-Round-679\Codeforces-Round-679.vcxproj", "{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algorithm_utility", "algorithm_utility\algorithm_utility.vcxproj", "{CC611BA5-2514-4435-BE37-BC116D1F6D38}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -146,6 +156,26 @@ Global
 		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Debug|x64.Build.0 = Debug|x64
 		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Release|x64.ActiveCfg = Release|x64
 		{CD3DB125-D596-4064-8F8D-206CF0D13677}.Release|x64.Build.0 = Release|x64
+		{8287EC22-9168-44AF-A6B9-5CE68C7B75A5}.Debug|x64.ActiveCfg = Debug|x64
+		{8287EC22-9168-44AF-A6B9-5CE68C7B75A5}.Debug|x64.Build.0 = Debug|x64
+		{8287EC22-9168-44AF-A6B9-5CE68C7B75A5}.Release|x64.ActiveCfg = Release|x64
+		{8287EC22-9168-44AF-A6B9-5CE68C7B75A5}.Release|x64.Build.0 = Release|x64
+		{D0E50F9E-56ED-4592-9638-676491188FF7}.Debug|x64.ActiveCfg = Debug|x64
+		{D0E50F9E-56ED-4592-9638-676491188FF7}.Debug|x64.Build.0 = Debug|x64
+		{D0E50F9E-56ED-4592-9638-676491188FF7}.Release|x64.ActiveCfg = Release|x64
+		{D0E50F9E-56ED-4592-9638-676491188FF7}.Release|x64.Build.0 = Release|x64
+		{DC013B60-AB65-4F8C-B967-6969223C0503}.Debug|x64.ActiveCfg = Debug|x64
+		{DC013B60-AB65-4F8C-B967-6969223C0503}.Debug|x64.Build.0 = Debug|x64
+		{DC013B60-AB65-4F8C-B967-6969223C0503}.Release|x64.ActiveCfg = Release|x64
+		{DC013B60-AB65-4F8C-B967-6969223C0503}.Release|x64.Build.0 = Release|x64
+		{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}.Debug|x64.ActiveCfg = Debug|x64
+		{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}.Debug|x64.Build.0 = Debug|x64
+		{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}.Release|x64.ActiveCfg = Release|x64
+		{572694C0-FD6D-4BE7-9D79-BCC0FDBDA026}.Release|x64.Build.0 = Release|x64
+		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Debug|x64.ActiveCfg = Debug|x64
+		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Debug|x64.Build.0 = Debug|x64
+		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Release|x64.ActiveCfg = Release|x64
+		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
