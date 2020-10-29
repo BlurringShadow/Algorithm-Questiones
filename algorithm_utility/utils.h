@@ -144,7 +144,7 @@ template<
 >, ReturnT>
 #else
     ,
-    std::enable_if_t<std::convertible_to<std::conditional_t<
+    std::enable_if_t<std::is_convertible_v<std::conditional_t<
         std::is_convertible_v<Left, ReturnT>,
         std::invoke_result_t<Op, ReturnT, Right>,
         std::invoke_result_t<Op, Left, ReturnT>
