@@ -101,12 +101,10 @@ public:
     }
 
 #ifdef __cpp_lib_concepts
-    template<ConvertibleToRef<std::istream> InputStream>
+    template<typename InputStream>
+    requires std::derived_from<std::remove_reference_t<InputStream>, std::istream>
 #else
-    template<
-        typename InputStream,
-        std::enable_if_t<std::is_convertible_v<InputStream, std::istream&&> || std::is_convertible_v<InputStream, std::istream&>>* = nullptr
-    >
+    template<typename InputStream, SFINAE(std::is_base_of_v<std::istream, std::remove_reference_t<InputStream>>)>
 #endif
     static void create_from_input(InputStream&& is)
     {
