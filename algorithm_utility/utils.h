@@ -78,25 +78,32 @@ public:
 };
 
 template<typename From, typename To>
-struct is_convertible_to_ref : std::bool_constant<
-        std::is_convertible_v<From, std::decay_t<To>&&> ||
-        std::is_convertible_v<From, std::decay_t<To>&>
-    > {};
+struct is_convertible_to_ref : std::bool_constant<std::is_convertible_v<From, std::conditional_t<
+        std::is_rvalue_reference_v<From>,
+        std::add_rvalue_reference_t<To>,
+        std::add_lvalue_reference_t<To>
+    >>> {};
 
 template<typename From, typename To>
 constexpr auto is_convertible_to_ref_v = is_convertible_to_ref<From, To>::value;
+
+#define COMMA ,
+#define SFINAE(condition) std::enable_if_t<condition>* = nullptr
 
 #ifdef __cpp_lib_concepts
 #include <concepts>
 #include <ranges>
 
+template<typename... Args, typename T>
+concept ConstructibleTo = std::constructible_from<T, Args...>;
+
 template<typename From, typename To>
 concept ConvertibleToRef = is_convertible_to_ref_v<From, To>;
 
-template<typename T, ConvertibleToRef<std::istream> InputStream, typename... Args>
+template<typename T, typename InputStream, ConstructibleTo Args>
 requires requires(InputStream is, T t)
 {
-    std::constructible_from<T, Args...>;
+    std::derived_from<std::remove_reference_t<InputStream>, std::istream>;
     is >> t;
 }
 #else
@@ -104,8 +111,10 @@ template<
     typename T,
     typename InputStream,
     typename... Args,
-    std::enable_if_t<std::is_constructible_v<T, Args...>>* = nullptr,
-    std::enable_if_t<is_convertible_to_ref_v<InputStream, std::istream>>* = nullptr
+    // ReSharper disable once CppRedundantParentheses
+    SFINAE((std::is_constructible_v<T, Args...>)),
+    // ReSharper disable once CppRedundantParentheses
+    SFINAE((std::is_base_of_v<std::istream, std::remove_reference_t<InputStream>>))
 >
 #endif
 [[nodiscard]] T get_from_stream(InputStream&& is, Args&&... args)
