@@ -2,11 +2,10 @@
 
 #pragma once
 #include <chrono>
-#include <concepts>
-#include <ranges>
-#include <string>
 
 #include <fmt/format.h>
+
+#include "utils.h"
 
 struct counter
 {
@@ -18,7 +17,14 @@ struct counter
     }
 };
 
-constexpr auto to_identical = []<typename T>(T&& value) { return std::forward<T>(value); };
+template<typename T, typename Input, typename Output>
+struct is_converter : std::bool_constant<
+        std::is_invocable_v<T, Input> &&
+        std::is_convertible_v<std::invoke_result_t<T, Input>, Output>
+    > {};
+
+template<typename T, typename Input, typename Output>
+constexpr auto is_converter_v = is_converter<T, Input, Output>::value;
 
 template<typename T, typename Input, typename Output>
 concept Converter = std::invocable<T, Input> && std::convertible_to<std::invoke_result_t<T, Input>, Output>;
@@ -33,8 +39,8 @@ template<
 static void test_run(
     const InputRange& input_data,
     Func func,
-    InputConverter input_converter = to_identical,
-    OutputConverter output_converter = to_identical,
+    InputConverter input_converter = std::identity{},
+    OutputConverter output_converter = std::identity{},
     const std::string_view format_str = "{}\n"
 )
 {

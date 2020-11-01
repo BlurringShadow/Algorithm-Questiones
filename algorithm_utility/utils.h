@@ -92,7 +92,6 @@ constexpr auto is_convertible_to_ref_v = is_convertible_to_ref<From, To>::value;
 
 #ifdef __cpp_lib_concepts
 #include <concepts>
-#include <ranges>
 
 template<typename... Args, typename T>
 concept ConstructibleTo = std::constructible_from<T, Args...>;
@@ -100,7 +99,7 @@ concept ConstructibleTo = std::constructible_from<T, Args...>;
 template<typename From, typename To>
 concept ConvertibleToRef = is_convertible_to_ref_v<From, To>;
 
-template<typename T, typename InputStream, ConstructibleTo Args>
+template<typename T, typename InputStream, ConstructibleTo<T>... Args>
 requires requires(InputStream is, T t)
 {
     std::derived_from<std::remove_reference_t<InputStream>, std::istream>;
