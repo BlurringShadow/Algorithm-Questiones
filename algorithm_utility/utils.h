@@ -59,11 +59,11 @@ public:
 
     void bind_to(const size_t i) { cout.rdbuf(&buffers_[i]); }
 
-    auto scope_bind_to(const size_t i) { return scope_binder{&buffers_[i]}; }
+    [[maybe_unused]] auto scope_bind_to(const size_t i) { return scope_binder{&buffers_[i]}; }
 
     void add_to_front() { buffers_.emplace_back(); }
 
-    auto scope_add_front()
+    [[maybe_unused]] auto scope_add_front()
     {
         add_to_front();
         return scope_bind_to(buffers_.size() - 1);
