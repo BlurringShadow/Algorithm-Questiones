@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="xor_wice.h" />
     <ClInclude Include="putting_bricks_in_the_wall.h" />
+    <ClInclude Include="palindromifier.h" />
   </ItemGroup>
 </Project>
