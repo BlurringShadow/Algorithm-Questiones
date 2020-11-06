@@ -14,6 +14,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hexagons.h" />
     <ClInclude Include="palindromifier.h" />
     <ClInclude Include="putting_bricks_in_the_wall.h" />
     <ClInclude Include="xor_wice.h" />
