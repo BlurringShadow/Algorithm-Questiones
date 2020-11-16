@@ -14,6 +14,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="prime_square.h" />
     <ClInclude Include="reorder.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

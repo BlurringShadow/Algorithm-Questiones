@@ -1,15 +1,8 @@
-#include "reorder.h"
+#include "prime_square.h"
 
 int main()
 {
-    if constexpr(is_debug)
-        reorder::create_from_input(
-            std::istringstream{
-                "2\
-                 3 8    2 5 1\
-                 4 4    0 1 2 3"
-            }
-        );
-    else reorder::create_from_input(cin);
+    if constexpr(is_debug) prime_square::create_from_input(std::istringstream{"2 3 4 5 6 100"});
+    else prime_square::create_from_input(cin);
     return 0;
 }
