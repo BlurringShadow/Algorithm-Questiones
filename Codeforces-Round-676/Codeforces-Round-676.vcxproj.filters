@@ -8,5 +8,6 @@
     <ClInclude Include="putting_bricks_in_the_wall.h" />
     <ClInclude Include="palindromifier.h" />
     <ClInclude Include="hexagons.h" />
+    <ClInclude Include="swedish_heroes.h" />
   </ItemGroup>
 </Project>
