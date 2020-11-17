@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="reorder.h" />
     <ClInclude Include="prime_square.h" />
+    <ClInclude Include="binary_search.h" />
   </ItemGroup>
 </Project>
