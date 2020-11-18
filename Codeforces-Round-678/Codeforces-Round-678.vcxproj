@@ -14,6 +14,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bandit_in_a_city.h" />
     <ClInclude Include="binary_search.h" />
     <ClInclude Include="prime_square.h" />
     <ClInclude Include="reorder.h" />
@@ -64,7 +65,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <AdditionalOptions>/Zc:__cplusplus /experimental:external /external:anglebrackets /external:W0 %(AdditionalOptions)</AdditionalOptions>
@@ -78,6 +79,7 @@
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -109,6 +111,7 @@
       <SupportJustMyCode>true</SupportJustMyCode>
       <EnforceTypeConversionRules>true</EnforceTypeConversionRules>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
