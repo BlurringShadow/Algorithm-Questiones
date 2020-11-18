@@ -13,10 +13,10 @@ constexpr auto is_debug =
 #endif
 ;
 
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <type_traits>
 #include <vector>
 
 using namespace std::literals; // NOLINT(clang-diagnostic-header-hygiene)
@@ -165,3 +165,13 @@ constexpr ReturnT cast_op(Left&& left, Right&& right, Op op)
         return op(static_cast<ReturnT>(std::forward<Left>(left)), std::forward<Right>(right));
     else return op(std::forward<Left>(left), static_cast<ReturnT>(std::forward<Right>(right)));
 }
+
+template<typename T, typename U, typename Comp>
+constexpr std::conditional_t<std::is_lvalue_reference_v<T&&>, T&&, T> set_if(T&& left, U&& right, Comp comp)
+{
+    if(comp(right, left)) left = std::forward<U>(right);
+    return left;
+}
+
+template<typename T, typename U>
+constexpr decltype(auto) set_if_greater(T&& left, U&& right) { return set_if(std::forward<T>(left), std::forward<U>(right), std::greater<>{}); }
