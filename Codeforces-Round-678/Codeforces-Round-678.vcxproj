@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="bandit_in_a_city.h" />
     <ClInclude Include="binary_search.h" />
+    <ClInclude Include="complicated_computations.h" />
     <ClInclude Include="prime_square.h" />
     <ClInclude Include="reorder.h" />
   </ItemGroup>
