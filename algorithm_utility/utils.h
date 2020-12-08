@@ -4,7 +4,6 @@
 #ifndef _DEBUG
 #define NDEBUG
 #endif
-
 constexpr auto is_debug =
 #ifdef NDEBUG
     false
@@ -13,6 +12,7 @@ constexpr auto is_debug =
 #endif
 ;
 
+#include <algorithm>
 #include <functional>
 #include <iostream>
 #include <sstream>
@@ -139,32 +139,8 @@ struct auto_cast
     }
 };
 
-template<
-    typename ReturnT,
-    typename Left,
-    typename Right,
-    typename Op
-#ifdef __cpp_lib_concepts
-> requires std::convertible_to<std::conditional_t<
-    std::is_convertible_v<Left, ReturnT>,
-    std::invoke_result_t<Op, ReturnT, Right>,
-    std::invoke_result_t<Op, Left, ReturnT>
->, ReturnT>
-#else
-    ,
-    std::enable_if_t<std::is_convertible_v<std::conditional_t<
-        std::is_convertible_v<Left, ReturnT>,
-        std::invoke_result_t<Op, ReturnT, Right>,
-        std::invoke_result_t<Op, Left, ReturnT>
-    >, ReturnT>>* = nullptr
->
-#endif
-constexpr ReturnT cast_op(Left&& left, Right&& right, Op op)
-{
-    if constexpr(std::is_convertible_v<Left, ReturnT>)
-        return op(static_cast<ReturnT>(std::forward<Left>(left)), std::forward<Right>(right));
-    else return op(std::forward<Left>(left), static_cast<ReturnT>(std::forward<Right>(right)));
-}
+template<typename T>
+auto_cast(T&& t) -> auto_cast<T>;
 
 template<typename T, typename U, typename Comp>
 constexpr std::conditional_t<std::is_lvalue_reference_v<T&&>, T&&, T> set_if(T&& left, U&& right, Comp comp)
@@ -174,4 +150,158 @@ constexpr std::conditional_t<std::is_lvalue_reference_v<T&&>, T&&, T> set_if(T&&
 }
 
 template<typename T, typename U>
-constexpr decltype(auto) set_if_greater(T&& left, U&& right) { return set_if(std::forward<T>(left), std::forward<U>(right), std::greater<>{}); }
+constexpr decltype(auto) set_if_greater(T&& left, U&& right)
+{
+    return set_if(std::forward<T>(left), std::forward<U>(right), std::greater<>{});
+}
+
+template<typename T>
+constexpr T low_bit(const T& t) { return t & ~t + 1; }
+
+template<typename T, typename Func>
+class binary_indexed_tree_base
+{
+    void reset_tree()
+    {
+        const auto size = vec_.size();
+        vec_.resize(vec_.size() * 2 - 1);
+
+        for(size_t i = 1; i < size; ++i)
+        {
+            get(i) = vec_[i];
+            for(auto j = low_bit(i) >> 1; j > 0; j >>= 1)
+                get(i) = apply_(std::move(get(i)), get(i - j));
+        }
+    }
+
+protected:
+    vector<T> vec_;
+    Func apply_;
+
+    [[nodiscard]] auto get_tree_index(const size_t index) const { return index == 0 ? 0 : index + vec_.size() / 2; }
+
+    [[nodiscard]] auto& get(const size_t index) { return vec_[get_tree_index(index)]; }
+
+    explicit binary_indexed_tree_base(Func f, vector<T> vec = {}) : vec_(std::move(vec)), apply_(std::move(f))
+    {
+        reset_tree();
+    }
+
+public:
+    [[nodiscard]] auto& operator[](size_t index) const { return vec_[index]; }
+
+    [[nodiscard]] auto& get(const size_t index) const { return vec_[get_tree_index(index)]; }
+
+    [[nodiscard]] auto get_range(size_t index) const
+    {
+        T res = vec_[0];
+        for(; index > 0; index -= low_bit(index)) res = apply_(std::move(res), get(index));
+        return res;
+    }
+
+    void reset(vector<T> vec = {})
+    {
+        vec_ = std::move(vec);
+        reset_tree();
+    }
+
+    [[nodiscard]] auto begin() const { return vec_.begin(); }
+    [[nodiscard]] auto end() const { return vec_.begin() + (vec_.size() + 1) / 2; }
+};
+
+template<typename T, typename Func, typename Inverter = void>
+class binary_indexed_tree : public binary_indexed_tree_base<T, Func>
+{
+    Inverter inverter_;
+
+public:
+    using base = binary_indexed_tree_base<T, Func>;
+
+    explicit binary_indexed_tree(Func f = {}, Inverter inverter = {}, vector<T> vec = {}) :
+        base(std::move(f), std::move(vec)),
+        inverter_(std::move(inverter)) {}
+
+    template<typename... Args>
+    void update(size_t index, Args&&... args)
+    {
+        if(index == 0)
+        {
+            base::vec_[0] = T(args...);
+            return;
+        }
+
+        const auto& delta = [&, this]()
+        {
+            auto previous = std::move(base::vec_[index]);
+            base::vec_[index] = T(std::forward<Args>(args)...);
+
+            return inverter_(base::vec_[index], previous);
+        }();
+
+        const auto size = (base::vec_.size() + 1) / 2;
+
+        while(true)
+        {
+            index = index + low_bit(index);
+            if(index >= size) break;
+
+            base::get(index) = base::apply_(std::move(base::get(index)), delta);
+        }
+    }
+
+    [[nodiscard]] auto get_range(const size_t begin, const size_t end) const
+    {
+        return inverter_(base::get_range(end), base::get_range(begin));
+    }
+};
+
+template<typename T, typename Func>
+class binary_indexed_tree<T, Func, void> : public binary_indexed_tree_base<T, Func>
+{
+public:
+    using base = binary_indexed_tree_base<T, Func>;
+
+    using base::get_range;
+
+    explicit binary_indexed_tree(Func f = {}, vector<T> vec = {}) : base(std::move(f), std::move(vec)) {}
+
+    template<typename... Args>
+    void update(size_t index, Args&&... args)
+    {
+        base::vec_[index] = T(args...);
+
+        if(index == 0) return;
+
+        for(const auto size = (base::vec_.size() + 1) / 2; index < size; index = index + low_bit(index))
+        {
+            base::get(index) = base::vec_[index];
+
+            for(auto i = low_bit(index) >> 1; i > 0; i >>= 1)
+                base::get(index) = base::apply_(std::move(base::get(index)), base::get(index - i));
+        }
+    }
+
+    [[nodiscard]] auto get_range(const size_t begin, size_t end) const
+    {
+        auto ret = base::vec_[end--];
+        for(; begin <= end; ret = base::apply_(std::move(ret), base::vec_[end]), --end)
+            while(true)
+            {
+                const auto pre = end;
+
+                end -= low_bit(end);
+                if(end < begin)
+                {
+                    end = pre;
+                    break;
+                }
+                ret = base::apply_(std::move(ret), base::get(end));
+            }
+    }
+};
+
+template<typename T, typename Compare>
+bool is_between(const T& v, const T& min, const T& max, Compare cmp) { return std::addressof(std::clamp(v, min, max, cmp)) == std::addressof(v); }
+
+template<typename T>
+bool is_between(const T& v, const T& min, const T& max) { return is_between(v, min, max, std::less<>{}); }
