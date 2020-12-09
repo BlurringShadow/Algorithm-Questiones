@@ -21,13 +21,11 @@ public:
         for(; i < size; --i) std::cout << energies_[i] << ' ';
     }
 
+    template<typename InputStream
 #ifdef __cpp_lib_concepts
-    template<ConvertibleToRef<std::istream> InputStream>
+    > requires requires(InputStream&& is) { get_from_stream<int>(is); }
 #else
-    template<
-        typename InputStream,
-        std::enable_if_t<std::is_convertible_v<T, std::istream&&> || std::is_convertible_v<T, std::istream&>>* = nullptr
-    >
+    , SFINAE((std::is_base_of_v<std::istream, std::remove_reference_t<InputStream>>))>
 #endif
     static void create_from_input(InputStream&& in)
     {

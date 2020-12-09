@@ -90,6 +90,25 @@ constexpr auto is_convertible_to_ref_v = is_convertible_to_ref<From, To>::value;
 #define COMMA ,
 #define SFINAE(condition) std::enable_if_t<condition>* = nullptr
 
+template<typename InputStream, typename... Args>
+struct input_helper
+{
+    InputStream is;
+    std::tuple<Args&&...> args;
+
+    // ReSharper disable once CppNonExplicitConversionOperator
+    template<typename T>
+    operator T()
+    {
+        auto t = std::make_from_tuple<T>(std::move(args));
+        is >> t;
+        return t;
+    }
+};
+
+template<typename InputStream, typename... Args, template<typename...> typename Tuple>
+input_helper(InputStream&&, Tuple<Args&&...>&&) -> input_helper<InputStream, Args...>;
+
 #ifdef __cpp_lib_concepts
 #include <concepts>
 
@@ -99,30 +118,23 @@ concept ConstructibleTo = std::constructible_from<T, Args...>;
 template<typename From, typename To>
 concept ConvertibleToRef = is_convertible_to_ref_v<From, To>;
 
-template<typename T, typename InputStream, ConstructibleTo<T>... Args>
-requires requires(InputStream is, T t)
-{
-    std::derived_from<std::remove_reference_t<InputStream>, std::istream>;
-    is >> t;
-}
+template<typename T = void, typename InputStream, ConstructibleTo<T>... Args>
+requires std::derived_from<std::remove_reference_t<InputStream>, std::istream>
 #else
 template<
-    typename T,
+    typename T = void,
     typename InputStream,
     typename... Args,
-    // ReSharper disable once CppRedundantParentheses
-    SFINAE((std::is_constructible_v<T, Args...>)),
-    // ReSharper disable once CppRedundantParentheses
+    SFINAE((std::is_same_v<T, void> || std::is_constructible_v<T, Args...>)),
     SFINAE((std::is_base_of_v<std::istream, std::remove_reference_t<InputStream>>))
 >
 #endif
-[[nodiscard]] T get_from_stream(InputStream&& is, Args&&... args)
+[[nodiscard]] auto get_from_stream(InputStream&& is, Args&&...args)
 {
-    T t(std::forward<Args>(args)...);
-    is >> t;
-    return t;
+    input_helper v{is, std::forward_as_tuple(std::forward<Args>(args)...)};
+    if constexpr(std::is_same_v<T, void>) return v;
+    else return static_cast<T>(v);
 }
-
 template<typename T>
 struct auto_cast
 {
@@ -301,7 +313,10 @@ public:
 };
 
 template<typename T, typename Compare>
-bool is_between(const T& v, const T& min, const T& max, Compare cmp) { return std::addressof(std::clamp(v, min, max, cmp)) == std::addressof(v); }
+bool is_between(const T& v, const T& min, const T& max, Compare cmp)
+{
+    return std::addressof(std::clamp(v, min, max, cmp)) == std::addressof(v);
+}
 
 template<typename T>
 bool is_between(const T& v, const T& min, const T& max) { return is_between(v, min, max, std::less<>{}); }
