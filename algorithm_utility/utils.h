@@ -20,9 +20,23 @@ constexpr auto is_debug =
 #include <vector>
 
 using namespace std::literals; // NOLINT(clang-diagnostic-header-hygiene)
+
 using std::size_t;
+using std::ptrdiff_t;
+
+using std::uint8_t;
+using std::uint16_t;
+using std::uint32_t;
+using std::uint64_t;
+
+using std::int8_t;
+using std::int16_t;
+using std::int32_t;
+using std::int64_t;
+
 using std::vector;
 using std::string;
+
 using std::cout;
 using std::cin;
 
@@ -77,16 +91,6 @@ public:
     }
 };
 
-template<typename From, typename To>
-struct is_convertible_to_ref : std::bool_constant<std::is_convertible_v<From, std::conditional_t<
-        std::is_rvalue_reference_v<From>,
-        std::add_rvalue_reference_t<To>,
-        std::add_lvalue_reference_t<To>
-    >>> {};
-
-template<typename From, typename To>
-constexpr auto is_convertible_to_ref_v = is_convertible_to_ref<From, To>::value;
-
 #define COMMA ,
 #define SFINAE(condition) std::enable_if_t<condition>* = nullptr
 
@@ -115,9 +119,6 @@ input_helper(InputStream&&, Tuple<Args&&...>&&) -> input_helper<InputStream, Arg
 template<typename... Args, typename T>
 concept ConstructibleTo = std::constructible_from<T, Args...>;
 
-template<typename From, typename To>
-concept ConvertibleToRef = is_convertible_to_ref_v<From, To>;
-
 template<typename T = void, typename InputStream, ConstructibleTo<T>... Args>
 requires std::derived_from<std::remove_reference_t<InputStream>, std::istream>
 #else
@@ -135,6 +136,7 @@ template<
     if constexpr(std::is_same_v<T, void>) return v;
     else return static_cast<T>(v);
 }
+
 template<typename T>
 struct auto_cast
 {
@@ -155,16 +157,22 @@ template<typename T>
 auto_cast(T&& t) -> auto_cast<T>;
 
 template<typename T, typename U, typename Comp>
-constexpr std::conditional_t<std::is_lvalue_reference_v<T&&>, T&&, T> set_if(T&& left, U&& right, Comp comp)
+constexpr T& set_if(T& left, U&& right, Comp comp)
 {
     if(comp(right, left)) left = std::forward<U>(right);
     return left;
 }
 
 template<typename T, typename U>
-constexpr decltype(auto) set_if_greater(T&& left, U&& right)
+constexpr T& set_if_greater(T& left, U&& right)
 {
-    return set_if(std::forward<T>(left), std::forward<U>(right), std::greater<>{});
+    return set_if(left, std::forward<U>(right), std::greater<>{});
+}
+
+template<typename T, typename U>
+constexpr T& set_if_lesser(T& left, U&& right)
+{
+    return set_if(left, std::forward<U>(right), std::less<>{});
 }
 
 template<typename T>
