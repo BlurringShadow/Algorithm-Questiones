@@ -16,6 +16,7 @@
   <ItemGroup>
     <ClInclude Include="finding_sasuke.h" />
     <ClInclude Include="new_technique.h" />
+    <ClInclude Include="perform_easily.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

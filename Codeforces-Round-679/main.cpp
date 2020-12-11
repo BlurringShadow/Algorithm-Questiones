@@ -1,4 +1,4 @@
-#include "new_technique.h"
+#include "perform_easily.h"
 
 int main()
 {
@@ -6,24 +6,13 @@ int main()
 
     if constexpr(is_debug)
     {
-        new_technique::create_from_input(
-            istringstream{
-                "2\
-                 2 3\
-                 6 5 4\
-                 1 2 3\n\
-                 1 6\
-                 2 5\
-                 3 4\
-                 3 1\n\
-                 2\
-                 3\
-                 1\
-                 3 1 2"
-            }
-        );
+        /*
+        perform_easily::create_from_input(istringstream{"1 2 3 4 5 6\n2\n10 20"}); //5
+        perform_easily::create_from_input(istringstream{"1 4 100 10 30 5\n6\n101 104 105 110 130 200"}); //0
+        */
+        perform_easily::create_from_input(istringstream{"1 1 2 2 3 3\n7\n13 4 11 12 11 13 12"}); //7
     }
-    else new_technique::create_from_input(cin);
+    else perform_easily::create_from_input(cin);
 
     return 0;
 }

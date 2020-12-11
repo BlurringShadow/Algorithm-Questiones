@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="finding_sasuke.h" />
     <ClInclude Include="new_technique.h" />
+    <ClInclude Include="perform_easily.h" />
   </ItemGroup>
 </Project>
