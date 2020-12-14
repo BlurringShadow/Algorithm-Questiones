@@ -1,18 +1,52 @@
-#include "perform_easily.h"
+#include "shurikens.h"
 
 int main()
 {
     using namespace std;
 
+    shurikens s;
     if constexpr(is_debug)
-    {
-        /*
-        perform_easily::create_from_input(istringstream{"1 2 3 4 5 6\n2\n10 20"}); //5
-        perform_easily::create_from_input(istringstream{"1 4 100 10 30 5\n6\n101 104 105 110 130 200"}); //0
-        */
-        perform_easily::create_from_input(istringstream{"1 1 2 2 3 3\n7\n13 4 11 12 11 13 12"}); //7
+    {        
+        istringstream is;
+        for(auto str : {
+                "4 + + - 2 + - 3 + - 1 - 4",
+                "1 - 1 +",
+                "3 + + + - 2 - 1 - 3",
+                "10 "
+                "+ "
+                "- 3 "
+                "+ "
+                "+ "
+                "+ "
+                "+ "
+                "- 1 "
+                "- 7 "
+                "- 9 "
+                "- 10 "
+                "+ "
+                "+ "
+                "+ "
+                "- 4 "
+                "- 5 "
+                "- 8 "
+                "+ "
+                "- 6 "
+                "+ "
+                "- 2"
+            })
+        {
+            is.str(str);
+            is.seekg(0);
+            is >> s;
+
+            cout << s;
+        }
     }
-    else perform_easily::create_from_input(cin);
+    else
+    {
+        cin >> s;
+        cout << s;
+    }
 
     return 0;
 }
