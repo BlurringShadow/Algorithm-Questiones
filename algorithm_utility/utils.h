@@ -4,6 +4,7 @@
 #ifndef _DEBUG
 #define NDEBUG
 #endif
+
 constexpr auto is_debug =
 #ifdef NDEBUG
     false
@@ -43,37 +44,43 @@ using std::cin;
 [[maybe_unused]] const auto static_ini_ = []()
 {
     std::ios::sync_with_stdio(false);
-    std::cin.tie(nullptr);
-    return std::cout.tie(nullptr);
+    cin.tie(nullptr);
+    return cout.tie(nullptr);
 }();
 
 class console_output_buffer_binder final
 {
     using buf_ptr_t = std::streambuf*;
 
+    std::ostream& os_;
     vector<std::stringbuf> buffers_;
-    const buf_ptr_t console_buf_ = cout.rdbuf();
+    const buf_ptr_t origin_buf_ = os_.rdbuf(&buffers_.front());
 
 public:
-    explicit console_output_buffer_binder(const size_t additional_count = 0) noexcept :
-        buffers_(additional_count + 1),
-        console_buf_(std::cout.rdbuf(&buffers_.front())) { bind_to(0); }
+    explicit console_output_buffer_binder(const size_t additional_count = 0, std::ostream& os = cout) noexcept :
+        os_(os),
+        buffers_(additional_count + 1) {}
 
     console_output_buffer_binder(const console_output_buffer_binder&) = delete;
     console_output_buffer_binder& operator=(const console_output_buffer_binder&) = delete;
 
-    struct scope_binder
+    void bind_to(const size_t i) { os_.rdbuf(&buffers_[i]); }
+
+    [[maybe_unused]] auto scope_bind_to(const size_t i)
     {
-        const buf_ptr_t new_buf_p;
-        const buf_ptr_t old_buf_p;
+        class scope_binder
+        {
+            std::ostream& os_;
 
-        explicit scope_binder(std::streambuf* new_buf) : new_buf_p(new_buf), old_buf_p(cout.rdbuf(new_buf)) {}
-        ~scope_binder() { cout.rdbuf(old_buf_p); }
-    };
+        public:
+            const buf_ptr_t old_buf_p;
 
-    void bind_to(const size_t i) { cout.rdbuf(&buffers_[i]); }
+            explicit scope_binder(std::ostream& os, std::streambuf* new_buf) : os_(os), old_buf_p(os_.rdbuf(new_buf)) {}
+            ~scope_binder() { os_.rdbuf(old_buf_p); }
+        };
 
-    [[maybe_unused]] auto scope_bind_to(const size_t i) { return scope_binder{&buffers_[i]}; }
+        return scope_binder{os_, &buffers_[i]};
+    }
 
     void add_to_front() { buffers_.emplace_back(); }
 
@@ -85,9 +92,9 @@ public:
 
     ~console_output_buffer_binder()
     {
-        cout.rdbuf(console_buf_);
+        os_.rdbuf(origin_buf_);
         const auto size = buffers_.size();
-        for(auto i = size - 1; i < size; --i) cout << buffers_[i].str();
+        for(auto i = size - 1; i < size; --i) os_ << buffers_[i].str();
     }
 };
 
