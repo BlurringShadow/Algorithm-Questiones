@@ -8,5 +8,6 @@
     <ClInclude Include="new_technique.h" />
     <ClInclude Include="perform_easily.h" />
     <ClInclude Include="shurikens.h" />
+    <ClInclude Include="solo_mid_oracle.h" />
   </ItemGroup>
 </Project>

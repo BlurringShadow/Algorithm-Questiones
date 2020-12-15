@@ -1,52 +1,43 @@
-#include "shurikens.h"
+#include "solo_mid_oracle.h"
 
 int main()
 {
     using namespace std;
 
-    shurikens s;
+    solo_mid_oracle problem;
     if constexpr(is_debug)
-    {        
+    {
         istringstream is;
         for(auto str : {
-                "4 + + - 2 + - 3 + - 1 - 4",
-                "1 - 1 +",
-                "3 + + + - 2 - 1 - 3",
-                "10 "
-                "+ "
-                "- 3 "
-                "+ "
-                "+ "
-                "+ "
-                "+ "
-                "- 1 "
-                "- 7 "
-                "- 9 "
-                "- 10 "
-                "+ "
-                "+ "
-                "+ "
-                "- 4 "
-                "- 5 "
-                "- 8 "
-                "+ "
-                "- 6 "
-                "+ "
-                "- 2"
+                // 1
+                "1 1 1 1",
+                // 2
+                "2 2 2 2",
+                // 1
+                "1 2 3 4",
+                // 5
+                "4 3 2 1",
+                // 534
+                "228 21 11 3",
+                // -1
+                "239 21 11 3",
+                // 500000500000
+                "1000000 1 1000000 1"
             })
         {
             is.str(str);
             is.seekg(0);
-            is >> s;
+            is >> problem;
 
-            cout << s;
+            cout << problem;
         }
     }
     else
-    {
-        cin >> s;
-        cout << s;
-    }
+        for(auto i = get_from_stream<uint32_t>(cin); i > 0; --i)
+        {
+            cin >> problem;
+            cout << problem;
+        }
 
     return 0;
 }
