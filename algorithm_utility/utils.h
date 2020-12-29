@@ -14,6 +14,7 @@ constexpr auto is_debug =
 ;
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <iostream>
 #include <sstream>
@@ -35,6 +36,7 @@ using std::int16_t;
 using std::int32_t;
 using std::int64_t;
 
+using std::array;
 using std::vector;
 using std::string;
 
@@ -133,8 +135,10 @@ template<
     typename T = void,
     typename InputStream,
     typename... Args,
+    // ReSharper disable CppRedundantParentheses
     SFINAE((std::is_same_v<T, void> || std::is_constructible_v<T, Args...>)),
     SFINAE((std::is_base_of_v<std::istream, std::remove_reference_t<InputStream>>))
+    // ReSharper restore CppRedundantParentheses
 >
 #endif
 [[nodiscard]] auto get_from_stream(InputStream&& is, Args&&...args)
@@ -171,16 +175,10 @@ constexpr T& set_if(T& left, U&& right, Comp comp)
 }
 
 template<typename T, typename U>
-constexpr T& set_if_greater(T& left, U&& right)
-{
-    return set_if(left, std::forward<U>(right), std::greater<>{});
-}
+constexpr T& set_if_greater(T& left, U&& right) { return set_if(left, std::forward<U>(right), std::greater<>{}); }
 
 template<typename T, typename U>
-constexpr T& set_if_lesser(T& left, U&& right)
-{
-    return set_if(left, std::forward<U>(right), std::less<>{});
-}
+constexpr T& set_if_lesser(T& left, U&& right) { return set_if(left, std::forward<U>(right), std::less<>{}); }
 
 template<typename T>
 constexpr T low_bit(const T& t) { return t & ~t + 1; }
@@ -335,3 +333,55 @@ bool is_between(const T& v, const T& min, const T& max, Compare cmp)
 
 template<typename T>
 bool is_between(const T& v, const T& min, const T& max) { return is_between(v, min, max, std::less<>{}); }
+
+template<typename RandomAccessContainer, typename ModT>
+constexpr void generate_inverse_elements(
+    RandomAccessContainer& container,
+    const ModT mod,
+    typename RandomAccessContainer::value_type begin,
+    typename RandomAccessContainer::value_type size
+)
+{
+    if(begin == 0) container[0] = 1;
+    for(; begin < size; ++begin)
+    {
+        const auto num = begin + 1;
+        container[begin] = auto_cast{(mod - mod / num) * container[mod % num - 1] % mod};
+    }
+}
+
+template<auto Mod>
+inline constexpr auto inverse_elements = []()
+{
+    array<decltype(Mod), Mod> inv{1};
+    generate_inverse_elements(inv, Mod, 1, Mod);
+    return inv;
+}();
+
+template<typename PromotionT = void, typename ModT, typename ElementT>
+auto get_inverse_elements(const ModT mod, ElementT size)
+{
+    vector<ElementT> inv(size, 1);
+    generate_inverse_elements(inv, mod, 1, size);
+    return inv;
+}
+
+template<typename ModT>
+auto get_inverse_elements(const ModT mod) { return get_inverse_elements(mod, mod); }
+
+template<typename RandomAccessContainer, typename ModT>
+auto mod_permutation(
+    const RandomAccessContainer& inv,
+    const typename RandomAccessContainer::value_type n,
+    const typename RandomAccessContainer::value_type m,
+    const ModT mod
+)
+{
+    ModT res = 1;
+
+    for(auto i = n - m + 1; i <= n; ++i) res = res * i % mod;
+    for(typename RandomAccessContainer::value_type i = 0; i < m; ++i) 
+        res = res * inv[i] % mod;
+
+    return res;
+}
