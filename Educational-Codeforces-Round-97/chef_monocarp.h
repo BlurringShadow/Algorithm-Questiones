@@ -1,7 +1,6 @@
 ﻿// Created by BlurringShadow at 2020-12-30-下午 8:53
 
 #pragma once
-
 #include "../algorithm_utility/utils.h"
 
 /*

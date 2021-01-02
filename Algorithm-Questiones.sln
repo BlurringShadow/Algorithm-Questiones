@@ -58,6 +58,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-679", "Cod
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "algorithm_utility", "algorithm_utility\algorithm_utility.vcxproj", "{CC611BA5-2514-4435-BE37-BC116D1F6D38}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Educational-Codeforces-Round-97", "Educational-Codeforces-Round-97\Educational-Codeforces-Round-97.vcxproj", "{5469BE24-5FB7-436A-B5C4-F57597E3A255}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LeetCode-biweekly-contest-38", "LeetCode-biweekly-contest-38\LeetCode-biweekly-contest-38.vcxproj", "{4F37D261-D1D8-42FF-82CF-BB96A73F50D6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-680", "Codeforces-Round-680\Codeforces-Round-680.vcxproj", "{C86AB778-C359-4F13-9F5C-1607C0680CD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -176,6 +182,18 @@ Global
 		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Debug|x64.Build.0 = Debug|x64
 		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Release|x64.ActiveCfg = Release|x64
 		{CC611BA5-2514-4435-BE37-BC116D1F6D38}.Release|x64.Build.0 = Release|x64
+		{5469BE24-5FB7-436A-B5C4-F57597E3A255}.Debug|x64.ActiveCfg = Debug|x64
+		{5469BE24-5FB7-436A-B5C4-F57597E3A255}.Debug|x64.Build.0 = Debug|x64
+		{5469BE24-5FB7-436A-B5C4-F57597E3A255}.Release|x64.ActiveCfg = Release|x64
+		{5469BE24-5FB7-436A-B5C4-F57597E3A255}.Release|x64.Build.0 = Release|x64
+		{4F37D261-D1D8-42FF-82CF-BB96A73F50D6}.Debug|x64.ActiveCfg = Debug|x64
+		{4F37D261-D1D8-42FF-82CF-BB96A73F50D6}.Debug|x64.Build.0 = Debug|x64
+		{4F37D261-D1D8-42FF-82CF-BB96A73F50D6}.Release|x64.ActiveCfg = Release|x64
+		{4F37D261-D1D8-42FF-82CF-BB96A73F50D6}.Release|x64.Build.0 = Release|x64
+		{C86AB778-C359-4F13-9F5C-1607C0680CD4}.Debug|x64.ActiveCfg = Debug|x64
+		{C86AB778-C359-4F13-9F5C-1607C0680CD4}.Debug|x64.Build.0 = Debug|x64
+		{C86AB778-C359-4F13-9F5C-1607C0680CD4}.Release|x64.ActiveCfg = Release|x64
+		{C86AB778-C359-4F13-9F5C-1607C0680CD4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
