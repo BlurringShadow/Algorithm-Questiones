@@ -15,6 +15,7 @@ constexpr auto is_debug =
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <functional>
 #include <iostream>
 #include <sstream>
@@ -156,7 +157,8 @@ struct auto_cast
 #ifdef __cpp_lib_concepts
     template<typename U> requires requires { static_cast<std::decay_t<U>>(std::forward<T>(t)); }
 #else
-    template<typename U, std::enable_if_t<std::is_convertible_v<T, std::decay_t<U>>>* = nullptr>
+    // ReSharper disable once CppRedundantParentheses
+    template<typename U, SFINAE((std::is_convertible_v<T, std::decay_t<U>>))>
 #endif
     constexpr operator U() noexcept(std::is_nothrow_constructible_v<T, std::decay_t<U>>)
     {
@@ -384,4 +386,23 @@ auto mod_permutation(
         res = res * inv[i] % mod;
 
     return res;
+}
+
+template<typename T, SFINAE(std::is_floating_point_v<T>)>
+auto log(const T a, const T b) { return log2l(a) / log2l(b); }
+
+template<typename T, SFINAE(std::is_integral_v<T>)>
+auto upper_log(T a, const T b)
+{
+    T count = 0;
+    for(; a != 0; a /= b, ++count);
+    return count;
+}
+
+template<typename T, SFINAE(std::is_integral_v<T>)>
+auto lower_log(T a, const T b)
+{
+    T count = 0;
+    for(; a > b; a /= b, ++count);
+    return count;
 }
