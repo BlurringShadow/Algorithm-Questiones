@@ -1,4 +1,4 @@
-﻿// Created by BlurringShadow at 2021-02-16-下午 10:48
+﻿// Created by BlurringShadow at 2021-02-18-下午 10:58
 
 #include "shifting_stacks.h"
 
@@ -11,8 +11,13 @@ int main()
     {
         istringstream is;
         for(auto str : {
-                "4 4 2 10 1",
-                "12 4 31 25 50 30 20 34 46 42 16 15 16"
+                "2 1 2",
+                "2 1 0",
+                "3 4 4 4",
+                "2 0 0",
+                "3 0 1 0",
+                "3 0 1 1",
+                "4 1000000000 1000000000 1000000000 1000000000"
             })
         {
             is.str(str);

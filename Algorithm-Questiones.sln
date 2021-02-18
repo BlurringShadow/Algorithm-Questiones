@@ -72,6 +72,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Educational-Codeforces-Roun
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-702", "Codeforces-Round-702\Codeforces-Round-702.vcxproj", "{4AB1A34E-9057-4F1E-8AA6-FCA7A25D47C2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-703", "Codeforces-Round-703\Codeforces-Round-703.vcxproj", "{EBE4E10E-34B5-4583-9E3C-F3D5F55C2B76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -218,6 +220,10 @@ Global
 		{4AB1A34E-9057-4F1E-8AA6-FCA7A25D47C2}.Debug|x64.Build.0 = Debug|x64
 		{4AB1A34E-9057-4F1E-8AA6-FCA7A25D47C2}.Release|x64.ActiveCfg = Release|x64
 		{4AB1A34E-9057-4F1E-8AA6-FCA7A25D47C2}.Release|x64.Build.0 = Release|x64
+		{EBE4E10E-34B5-4583-9E3C-F3D5F55C2B76}.Debug|x64.ActiveCfg = Debug|x64
+		{EBE4E10E-34B5-4583-9E3C-F3D5F55C2B76}.Debug|x64.Build.0 = Debug|x64
+		{EBE4E10E-34B5-4583-9E3C-F3D5F55C2B76}.Release|x64.ActiveCfg = Release|x64
+		{EBE4E10E-34B5-4583-9E3C-F3D5F55C2B76}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
