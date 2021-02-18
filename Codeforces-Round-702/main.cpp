@@ -1,6 +1,6 @@
 ﻿// Created by BlurringShadow at 2021-02-16-下午 10:48
 
-#include "shifting_stacks.h"
+#include "dense_array.h"
 
 int main()
 {
