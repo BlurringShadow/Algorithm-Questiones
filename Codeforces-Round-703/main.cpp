@@ -1,6 +1,6 @@
 ﻿// Created by BlurringShadow at 2021-02-18-下午 10:58
 
-#include "shifting_stacks.h"
+#include "three_swimmers.h"
 
 int main()
 {
@@ -11,13 +11,10 @@ int main()
     {
         istringstream is;
         for(auto str : {
-                "2 1 2",
-                "2 1 0",
-                "3 4 4 4",
-                "2 0 0",
-                "3 0 1 0",
-                "3 0 1 1",
-                "4 1000000000 1000000000 1000000000 1000000000"
+                "9 5 4 8",
+                "2 6 10 9",
+                "10 2 5 10",
+                "10 9 9 9"
             })
         {
             is.str(str);
