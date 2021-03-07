@@ -78,6 +78,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Global-Round-13"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Educational-Codeforces-Round-105", "Educational-Codeforces-Round-105\Educational-Codeforces-Round-105.vcxproj", "{63FDBD81-7F11-45F3-86B7-C298600F230B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Codeforces-Round-705", "Codeforces-Round-705\Codeforces-Round-705.vcxproj", "{1CCBEA44-EC28-43FE-828E-6A61639B16AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -236,6 +238,10 @@ Global
 		{63FDBD81-7F11-45F3-86B7-C298600F230B}.Debug|x64.Build.0 = Debug|x64
 		{63FDBD81-7F11-45F3-86B7-C298600F230B}.Release|x64.ActiveCfg = Release|x64
 		{63FDBD81-7F11-45F3-86B7-C298600F230B}.Release|x64.Build.0 = Release|x64
+		{1CCBEA44-EC28-43FE-828E-6A61639B16AF}.Debug|x64.ActiveCfg = Debug|x64
+		{1CCBEA44-EC28-43FE-828E-6A61639B16AF}.Debug|x64.Build.0 = Debug|x64
+		{1CCBEA44-EC28-43FE-828E-6A61639B16AF}.Release|x64.ActiveCfg = Release|x64
+		{1CCBEA44-EC28-43FE-828E-6A61639B16AF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

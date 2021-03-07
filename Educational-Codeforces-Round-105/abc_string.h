@@ -14,10 +14,15 @@ class abc_string final
     {
         using namespace std;
 
-        for(uint8_t i = 1; i < 7; ++i)
+        static constexpr auto maps = []()
         {
-            std::bitset<3> map{i};
+            std::array<std::bitset<3>, 6> sets;
+            for(uint8_t i = 1; i < 7; ++i) sets[i - 1] = i;
+            return sets;
+        }();
 
+        for(const auto map : maps)
+        {
             std::list<bool> str_list(str_.size());
             std::transform(
                 str_.cbegin(),

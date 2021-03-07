@@ -1,5 +1,5 @@
-﻿// Created by BlurringShadow at 2021-03-02-下午 10:50
-#include "abc_string.h"
+﻿// Created by BlurringShadow at 2021-03-06-下午 10:32
+#include "planet_lapituletti.h"
 
 int main()
 {
@@ -10,10 +10,11 @@ int main()
     {
         istringstream is;
         for(auto str : {
-                "AABBAC",
-                "CACA",
-                "BBBBAC",
-                "ABCA"
+                "24 60\n 12:21",
+                "24 60\n 23:59",
+                "90 80\n 52:26",
+                "1 100\n 00:01",
+                "10 10\n 04:04"
             })
         {
             is.str(str);
