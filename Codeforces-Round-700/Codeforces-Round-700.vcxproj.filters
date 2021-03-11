@@ -6,5 +6,6 @@
   <ItemGroup>
     <ClInclude Include="yet_another_string_game.h" />
     <ClInclude Include="the_great_hero.h" />
+    <ClInclude Include="searching_local_minimum.h" />
   </ItemGroup>
 </Project>

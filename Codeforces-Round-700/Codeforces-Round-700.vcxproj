@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="searching_local_minimum.h" />
     <ClInclude Include="the_great_hero.h" />
     <ClInclude Include="yet_another_string_game.h" />
   </ItemGroup>
